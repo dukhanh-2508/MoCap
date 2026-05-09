@@ -41,6 +41,8 @@ PyQt6 doesn't have this issue, so ignore this part.
 # os.environ["QT_QPA_PLATFORM"] = "xcb"
 # os.environ["QT_XCB_GL_INTEGRATION"] = "xcb_egl"
 
+# tcp://127.0.0.1:5555
+
 import time
 import csv
 from collections import deque
@@ -49,13 +51,19 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QPushButton, QComboBox, QLabel, 
                              QCheckBox, QSlider, QGroupBox, QFormLayout, QListWidget,
                              QDialog, QFormLayout, QLineEdit, QComboBox, QAbstractItemView,
-                             QDialogButtonBox, QListWidgetItem) # GUI Components
+                             QDialogButtonBox, QListWidgetItem, QMessageBox) # GUI Components
+
 from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtGui import QVector3D, QFont, QIcon, QPixmap, QPainter, QColor
+from PyQt6.QtGui import QVector3D, QFont, QIcon, QPixmap, QPainter, QColor, QCloseEvent
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 
+import zmq
+import struct
+
 import math
+
+MOCAP_CHANNEL = b'\x01'
 
 class Marker():
     base_mesh_data = gl.MeshData.sphere(rows=10, cols=20)
@@ -144,6 +152,26 @@ class ConfigMarkerDialog(QDialog):
         self.btn_box.rejected.connect(self.reject)
         layout.addWidget(self.btn_box)
 
+class SubCoordDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Enter subscribe data")
+        self.setMinimumWidth(300)
+
+        layout = QFormLayout(self)
+
+        self.ip_field = QLineEdit()
+        layout.addRow("Enter IP:", self.ip_field)
+
+        self.port_field = QLineEdit()
+        layout.addRow("Enter port number:", self.port_field)
+
+        self.btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        
+        self.btn_box.accepted.connect(self.accept) 
+        self.btn_box.rejected.connect(self.reject)
+        layout.addWidget(self.btn_box)
+
 class MoCapApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -203,7 +231,10 @@ class MoCapApp(QMainWindow):
         btn_layout.addWidget(self.btn_stop)
         
         self.combo_source = QComboBox() # Create a drop down menu
-        self.combo_source.addItems(["Real-time (Simulated)", "CSV Playback"])
+        self.sub_context = None
+        self.sub = None
+        self.combo_source.addItems(["Simulation", "Real-time", "CSV Playback"])
+        self.combo_source.currentIndexChanged.connect(self.call_sub_coord_prompt)
         
         form_metrics = QFormLayout() # A layout for key - value type display
         self.lbl_fps = QLabel("0")
@@ -330,6 +361,45 @@ class MoCapApp(QMainWindow):
         self.view.addItem(self.grid)
 
     # UI event processing functions
+    def sub_coord(self):
+        ip = self.sub_dialog.ip_field.text()
+        port = self.sub_dialog.port_field.text()
+
+        self.sub_context = zmq.Context()
+        self.sub = self.sub_context.socket(zmq.SUB)
+        try:
+            self.sub.connect(f"tcp://{ip}:{port}")
+        except zmq.error.ZMQError:
+            QMessageBox.warning(self, "Unable to connect", "Check your IP and port")
+            self.sub_context = None
+            self.sub = None
+        else:
+            self.sub.setsockopt(zmq.SUBSCRIBE, MOCAP_CHANNEL)
+
+    def unsub_coord(self):
+        if self.sub != None and self.sub_context != None:
+            ip = self.sub_dialog.ip_field.text()
+            port = self.sub_dialog.port_field.text()
+            try:
+                self.sub.disconnect(f"tcp://{ip}:{port}")
+            except zmq.error.ZMQError:
+                pass
+
+            QMessageBox.warning(self, "Unsub", f"Disconnected from {ip}:{port}")
+
+            self.sub_context = None
+            self.sub = None
+
+    def call_sub_coord_prompt(self):
+        option = self.combo_source.currentText()
+
+        if option == "Real-time":
+            self.sub_dialog = SubCoordDialog()
+            self.sub_dialog.accepted.connect(self.sub_coord)
+            self.sub_dialog.show()
+        else:
+            self.unsub_coord()
+
     def play_stream(self):
         self.is_playing = True
         self.last_time = time.time()
@@ -471,7 +541,7 @@ class MoCapApp(QMainWindow):
                 self.csv_file.close()
 
     # Data simulation
-    def fetch_data(self):
+    def fetch_data_sim(self):
         self.sim_t += 0.05
         data = []
 
@@ -480,6 +550,40 @@ class MoCapApp(QMainWindow):
         data.append((0, 8 * math.cos(self.sim_t * 1.5), 8 * math.sin(self.sim_t * 1.5), 3))
 
         return data
+
+    def fetch_data_sub(self):
+        data = []
+        
+        if self.sub is None:
+            return data
+
+        try:
+            while True: # recv_multipart will repeatedly take out data, and invoke an exception when all data is received.
+                parts = self.sub.recv_multipart(flags=zmq.NOBLOCK) # NOBLOCK => recv doesn't block the program
+                # Check if there's data, if not, evoke zmq.error.Again
+                
+                topic = parts[0]
+                raw_bytes = parts[1]
+
+                if topic == MOCAP_CHANNEL:
+                    unpacked_data = struct.unpack("<i3f", raw_bytes)
+                    
+                    m_id = unpacked_data[0]
+                    x = unpacked_data[1]    
+                    y = unpacked_data[2]    
+                    z = unpacked_data[3]
+                    
+                    data.append((x, y, z, m_id))
+                    
+        except zmq.error.Again:
+            pass
+        except Exception as e:
+            print(f"Unable to read byte stream: {e}")
+
+        return data
+
+    def fetch_data_csv(self):
+        return (0, 0, 0, 0)
 
     def update_loop(self):
         if not self.is_playing:
@@ -496,7 +600,13 @@ class MoCapApp(QMainWindow):
         self.last_time = current_time
 
         # Fetch data
-        incoming_data = self.fetch_data()
+        data_src = self.combo_source.currentText()
+        if data_src == "Real-time":
+            incoming_data = self.fetch_data_sub()
+        elif data_src == "Simulation":
+            incoming_data = self.fetch_data_sim()
+        elif data_src == "CSV Playback":
+            incoming_data = self.fetch_data_csv()
         
         coord_text = "Marker Coordinates:\n"
 
@@ -532,9 +642,60 @@ class MoCapApp(QMainWindow):
         else:
             self.lbl_coordinates.setText("Marker Coordinates:\n[Hidden]")
 
+    # Clean up
+    def closeEvent(self, event: QCloseEvent):
+        if self.sub is not None:
+            self.sub.close()
+        
+        if self.sub_context is not None:
+            self.sub_context.term()
+
+        event.accept()
+
 if __name__ == '__main__':
     app = QApplication(sys.argv) # QApplication manages the event loop, initialize the application, and other management tasks
     window = MoCapApp()
     window.show()
     sys.exit(app.exec()) # app.exec() the event loop
 
+"""
+#include <zmq.hpp>
+#include <iostream>
+#include <cstdint> // Bắt buộc để dùng int32_t (đảm bảo đúng 4 byte)
+
+// 1. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU (Ép không cho C++ chèn byte rác)
+#pragma pack(push, 1)
+struct MoCapPoint {
+    int32_t id;      // 4 bytes
+    float x;         // 4 bytes
+    float y;         // 4 bytes
+    float z;         // 4 bytes
+};                   // Tổng cộng: ĐÚNG 16 bytes
+#pragma pack(pop)
+
+int main() {
+    zmq::context_t context(1);
+    zmq::socket_t publisher(context, ZMQ_PUB);
+    publisher.bind("tcp://127.0.0.1:5555");
+
+    while (true) {
+        // Tạo dữ liệu giả lập
+        MoCapPoint point = {1, 1.5f, 2.0f, 3.5f};
+
+        // 2. GỬI PHẦN 1: Tên kênh (Label)
+        std::string topic = "MOCAP_DATA";
+        zmq::message_t msg_topic(topic.size());
+        memcpy(msg_topic.data(), topic.data(), topic.size());
+        
+        // Cờ ZMQ_SNDMORE báo cho ZMQ biết: "Khoan gửi, tôi còn đính kèm file"
+        publisher.send(msg_topic, zmq::send_flags::sndmore); 
+
+        // 3. GỬI PHẦN 2: Dữ liệu nhị phân (Binary Payload)
+        zmq::message_t msg_payload(sizeof(MoCapPoint));
+        memcpy(msg_payload.data(), &point, sizeof(MoCapPoint)); // Lấy thẳng địa chỉ RAM của struct ném vào
+        
+        publisher.send(msg_payload, zmq::send_flags::none); // Gửi toàn bộ đi
+    }
+    return 0;
+}
+"""
