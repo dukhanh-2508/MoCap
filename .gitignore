@@ -1,0 +1,11 @@
+# Bỏ qua các file thực thi
+*.exe
+*.out
+*.app
+
+# Bỏ qua các file Object
+*.o
+*.obj
+
+# Bỏ qua thư mục build (nếu bạn dùng CMake)
+build/
