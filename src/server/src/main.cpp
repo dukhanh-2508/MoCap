@@ -1,39 +1,70 @@
 #include <thread>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/dup_filter_sink.h>
+#include <spdlog/async.h>
 
-#include "CLI11.hpp"
+#include "../../lib/CLI11.hpp"
+#include "../../lib/frameQueue.hpp"
 
-#include "orchestrator.hpp"
-#include "receiver.hpp"
-#include "processor.hpp"
-#include "frameQueue.hpp"
+#include "../orchestrator.hpp"
+#include "../receiver.hpp"
+#include "../processor.hpp"
 
-#include "lib.hpp"
+#include "../../lib/lib.hpp"
 
 using namespace std;
 
+void setupLogger() {
+    // 1. Khởi tạo một hàng đợi chứa tối đa 8192 tin nhắn log, và dùng 1 luồng công nhân
+    spdlog::init_thread_pool(8192, 1);
+
+    auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    auto dup_filter = std::make_shared<spdlog::sinks::dup_filter_sink_mt>(std::chrono::seconds(5));
+    dup_filter->add_sink(stdout_sink);
+
+    // 2. Thay vì make_shared<spdlog::logger>, ta dùng async_logger
+    auto logger = std::make_shared<spdlog::async_logger>(
+        "MoCapSys", 
+        dup_filter, 
+        spdlog::thread_pool(), 
+        spdlog::async_overflow_policy::block // Nếu hàng đợi đầy thì làm gì (block hoặc drop)
+    );
+    
+    spdlog::set_default_logger(logger);
+}
+
 int main() {
+    setupLogger();
+
     DataQueue<AlignedFrame> dataQueue;
 
     GlobalConfig glcfg = {
         .is_running = true,
     };
     ReceiverConfig rcv_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
+        .rcv_port = 5557,
+        .rcv_ip = "0.0.0.0",
     };
     ProcessorConfig prs_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
+        .prs_port = 5556,
+        .prs_ip = "0.0.0.0",
     };
     OrchestratorConfig orch_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
+        .orch_port = 5555,
+        .orch_ip = "255.255.255.255",
     };
     
     OrchestratorFunctor orch(orch_cfg);
     ReceiverFunctor rcv(rcv_cfg);
     ProcessorFunctor prs(prs_cfg);
 
-    thread orchThread(orch);
-    thread rcvThread(rcv, ref(dataQueue));
-    thread prsThread(prs, ref(dataQueue));
+    thread orchThread(ref(orch));
+    thread rcvThread(ref(rcv), ref(dataQueue));
+    thread prsThread(ref(prs), ref(dataQueue));
 
     CLI::App app;
 
@@ -64,6 +95,11 @@ int main() {
 
             if (switch_cmd->parsed()) { 
                 glcfg.is_running = false;
+                orch_cfg.glcfg.is_running = false;
+                rcv_cfg.glcfg.is_running = false;
+                prs_cfg.glcfg.is_running = false;
+
+                break;
             }
             if (set_cmd->parsed()) {
                 if (configOrch) {

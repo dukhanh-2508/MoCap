@@ -1,12 +1,12 @@
 #include <iostream>
 #include <thread>
-#include "../src/lib/CLI11.hpp"
+#include "../../lib/CLI11.hpp"
 
-#include "sender.hpp"
-#include "receiver.hpp"
-#include "imgProcessing.hpp"
-#include "frameQueue.hpp"
-#include "lib.hpp"
+#include "../sender.hpp"
+#include "../receiver.hpp"
+#include "../imgProcessing.hpp"
+#include "../../lib/frameQueue.hpp"
+#include "../../lib/lib.hpp"
 
 using namespace std;
 
@@ -15,13 +15,17 @@ int main() {
         .is_running = true,
     };
     ReceiverConfig rcv_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
+        .rcv_port = 5555,
+        .rcv_ip = "0.0.0.0",
     };
     SenderConfig snd_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
+        .snd_port = 5557,
+        .snd_ip = "255.255.255.255", // IP server (as of the testing time, at least)
     };
     CameraConfig cmr_cfg = {
-        .glcfg = &glcfg,
+        .glcfg = glcfg,
     };
 
     DataQueue<FutureTriggerPacket> cmdQueue;
@@ -31,9 +35,9 @@ int main() {
     MarkerDetectorFunctor prs(cmr_cfg);
     ResultSenderFunctor snd(snd_cfg);
 
-    thread rcvThread(rcv, ref(cmdQueue));
-    thread prsThread(prs, ref(cmdQueue), ref(resultQueue));
-    thread sndThread(snd, ref(resultQueue));
+    thread rcvThread(ref(rcv), ref(cmdQueue));
+    thread prsThread(ref(prs), ref(cmdQueue), ref(resultQueue));
+    thread sndThread(ref(snd), ref(resultQueue));
 
     CLI::App app;
 
@@ -64,6 +68,9 @@ int main() {
 
             if (switch_cmd->parsed()) { 
                 glcfg.is_running = false;
+                rcv_cfg.glcfg.is_running = false;
+                cmr_cfg.glcfg.is_running = false;
+                snd_cfg.glcfg.is_running = false;
             }
             if (set_cmd->parsed()) {
                 if (set_cmd->count("--id") > 0) { // Change ID

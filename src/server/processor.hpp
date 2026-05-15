@@ -3,27 +3,17 @@
 #include <iostream>
 #include <mutex>
 
-#include "lib.hpp"
-#include "frameQueue.hpp"
+#include "../lib/lib.hpp"
+#include "../lib/frameQueue.hpp"
 
 using namespace std;
 
-#pragma pack(push, 1)
-typedef struct {
-    int32_t m_id;
-    float x;       
-    float y;    
-    float z;
-} ProcessedPoint;
-#pragma pack(pop)
-
 class Processor3D {
-    private:
-        DataQueue<AlignedFrame>& commQueue;
-
-        void triangulate(const AlignedFrame& frame);
     public:
-        Processor3D(DataQueue<AlignedFrame>& queue) : commQueue (queue) {};
+        Processor3D() = default;
+        
+        // Hàm nhận frame 2D và trả ra các điểm 3D
+        vector<ProcessedPoint> triangulate(const AlignedFrame& frame);
 };
 
 class ProcessorFunctor {

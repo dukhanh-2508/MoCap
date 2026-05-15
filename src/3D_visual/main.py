@@ -322,7 +322,7 @@ class MoCapApp(QMainWindow):
 
         # 3D Visual space
         self.view = gl.GLViewWidget() # Create an OpenGL view widget
-        self.view.opts['distance'] = 40
+        self.view.opts['distance'] = 100
 
         main_layout.addWidget(control_panel)
         main_layout.addWidget(self.view, 1)
@@ -333,7 +333,7 @@ class MoCapApp(QMainWindow):
         self.grid.scale(2, 2, 2)
 
         # Init axis
-        axis_length = 10
+        axis_length = 40
         line_width = 3
         
         # Khởi tạo một đối tượng Font với kích thước to rõ (ví dụ size 20)
@@ -368,13 +368,17 @@ class MoCapApp(QMainWindow):
         self.sub_context = zmq.Context()
         self.sub = self.sub_context.socket(zmq.SUB)
         try:
+            print(f"[ZMQ] Estabilishing connection to tcp://{ip}:{port}")
             self.sub.connect(f"tcp://{ip}:{port}")
         except zmq.error.ZMQError:
+            print(f"[ZMQ] Failed to establish connection")
             QMessageBox.warning(self, "Unable to connect", "Check your IP and port")
             self.sub_context = None
             self.sub = None
         else:
+            print(f"[ZMQ] Set header")
             self.sub.setsockopt(zmq.SUBSCRIBE, MOCAP_CHANNEL)
+            print(f"[ZMQ] Done setting header")
 
     def unsub_coord(self):
         if self.sub != None and self.sub_context != None:
@@ -574,6 +578,7 @@ class MoCapApp(QMainWindow):
                     z = unpacked_data[3]
                     
                     data.append((x, y, z, m_id))
+                    print(f"Received data: {(x, y, z, m_id)}")
                     
         except zmq.error.Again:
             pass

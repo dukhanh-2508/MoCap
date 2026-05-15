@@ -1,8 +1,10 @@
 #include <cstring>
 #include <unistd.h>
 #include <thread>
+#include <spdlog/spdlog.h>
 
-#include "orchestrator.hpp"
+#include "../orchestrator.hpp"
+#include "../../lib/log.hpp"
 
 using namespace std;
 
@@ -25,16 +27,21 @@ void OrchestratorFunctor::changeSocket(OrchestratorConfig& orch_cfg) {
 }
 
 bool OrchestratorFunctor::createSocket() {
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sock < 0) {
+    int new_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (new_sock < 0) {
         cerr << "[ORCHESTRATOR] Error: Failed to create socket" << endl;
         return false;
     }
 
     int broadcastEnable = 1;
-    if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) < 0) {
+    if (setsockopt(new_sock, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) < 0) {
         cerr << "[ORCHESTRATOR] Failed to config boardcast" << endl;
-    }    
+    }
+    
+    struct timeval read_timeout;
+    read_timeout.tv_sec = 0;
+    read_timeout.tv_usec = 100000; 
+    setsockopt(new_sock, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
 
     memset(&(this->boardcast_addr), 0, sizeof(this->boardcast_addr));
     (this->boardcast_addr).sin_family = AF_INET;
@@ -42,10 +49,12 @@ bool OrchestratorFunctor::createSocket() {
     if (inet_pton(AF_INET, this->orchIP.c_str(), &(this->boardcast_addr).sin_addr) <= 0) {
         cerr << "[ORCHESTRATOR] Invalid IP. Default to INADDR_BROADCAST" << endl;
         (this->boardcast_addr).sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        this->orchIP = "255.255.255.255";
     }
 
-    this->sock = sock;
+    this->sock = new_sock;
 
+    cout << "[ORCHESTRATOR] Socket created. Address: " << this->orchIP << " - " << this->orchPort << endl;
     cout << "[ORCHESTRATOR] Started. Sending commands..." << endl;
     
     return true;
@@ -56,10 +65,11 @@ bool OrchestratorFunctor::operator()() {
 
     uint32_t current_frame = 0;
     const uint64_t FUTURE_OFFSET_US = 15000; 
-    const int FPS = 30;
-    const chrono::milliseconds loop_delay(1000 / FPS);
+    const float FPS = 1.0/7;
+    float loopDelay = 1000 / FPS;
+    const chrono::milliseconds loop_delay((int) loopDelay);
 
-    while (*(this->isRunning)) {
+    while (((this->isRunning != NULL) && *(this->isRunning))) {
         if (this->needsUpdate) {
             close(sock);
             createSocket();
@@ -79,7 +89,13 @@ bool OrchestratorFunctor::operator()() {
 
         if (sendto(sock, &packet, sizeof(packet), 0, 
                   (struct sockaddr*)&(this->boardcast_addr), sizeof(this->boardcast_addr)) < 0) {
-            cerr << "[ORCHESTRATOR] Warning: Unable to send command!" << endl;
+            // cerr << "[ORCHESTRATOR] Warning: Unable to send command!" << endl;
+            // cerr << "[ORCHESTRATOR] Errno: " << errno << " - " << strerror(errno) << endl;
+            spdlog::error(
+                "[ORCHESTRATOR] Warning: Unable to send command!\nErrno: {} - {}", errno, strerror(errno)
+            );
+        } else {
+            spdlog::info("[ORCHESTRATOR] Set time to {}", target_time);
         }
 
         this_thread::sleep_for(loop_delay);

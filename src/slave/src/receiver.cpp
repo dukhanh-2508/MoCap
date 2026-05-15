@@ -1,7 +1,8 @@
 #include <fcntl.h>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
-#include "receiver.hpp"
+#include "../receiver.hpp"
 
 using namespace std;
 
@@ -41,6 +42,11 @@ bool ReceiverFunctor::createSocket() {
         cerr << "[SLAVE RECEIVER] Failed to config reuse socket" << endl;
     }
 
+    struct timeval read_timeout;
+    read_timeout.tv_sec = 0;
+    read_timeout.tv_usec = 100000; 
+    setsockopt(new_sock, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
+
     struct sockaddr_in recv_addr;
     memset(&recv_addr, 0, sizeof(recv_addr));
     recv_addr.sin_family = AF_INET;
@@ -68,7 +74,10 @@ bool ReceiverFunctor::createSocket() {
 bool ReceiverFunctor::operator()(DataQueue<FutureTriggerPacket>& queue) {
     createSocket();
 
-    while (*(this->isRunning)) {
+    int frame_count = 0;
+    auto last_fps_time = std::chrono::steady_clock::now();
+
+    while (((this->isRunning != NULL) && *(this->isRunning))) {
         if (this->needsUpdate) {
             close(this->sock);
             createSocket();
@@ -85,6 +94,21 @@ bool ReceiverFunctor::operator()(DataQueue<FutureTriggerPacket>& queue) {
             this_thread::sleep_for(chrono::microseconds(100));
         } else {
             queue.push(move(packet));
+
+            // --- THÊM: Logic tính và in FPS ---
+            frame_count++;
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_fps_time).count();
+
+            if (elapsed_ms >= 1000) { // Đã trôi qua 1 giây
+                spdlog::info("[SLAVE RECEIVER] Receive FPS: {}", frame_count);
+                // Nếu dùng spdlog thì thay bằng:
+                // spdlog::info("[SLAVE RECEIVER] Receive FPS: {}", frame_count);
+                
+                frame_count = 0;         // Reset bộ đếm
+                last_fps_time = now;     // Mốc thời gian mới
+            }
+            // ----------------------------------
         }
     }
 

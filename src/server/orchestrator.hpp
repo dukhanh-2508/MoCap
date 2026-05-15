@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 #include <mutex>
 
-#include "lib.hpp"
+#include "../lib/lib.hpp"
 
 class OrchestratorFunctor {
     private:

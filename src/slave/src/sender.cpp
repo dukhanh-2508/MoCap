@@ -1,5 +1,7 @@
 #include <unistd.h>
-#include "sender.hpp"
+#include <spdlog/spdlog.h>
+
+#include "../sender.hpp"
 
 ResultSenderFunctor::ResultSenderFunctor(SenderConfig& cfg) {
     this->isRunning = &(cfg.glcfg.is_running);
@@ -31,7 +33,12 @@ bool ResultSenderFunctor::createSocket() {
         cerr << "[SLAVE SENDER] Failed to config boardcast" << endl;
         close(new_sock);
         return false;
-    }    
+    }   
+    
+    struct timeval read_timeout;
+    read_timeout.tv_sec = 0;
+    read_timeout.tv_usec = 100000; 
+    setsockopt(new_sock, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
 
     memset(&(this->boardcast_addr), 0, sizeof(this->boardcast_addr));
     (this->boardcast_addr).sin_family = AF_INET;
@@ -40,6 +47,7 @@ bool ResultSenderFunctor::createSocket() {
     if (inet_pton(AF_INET, this->sendIP.c_str(), &(this->boardcast_addr).sin_addr) <= 0) {
         cerr << "[SLAVE SENDER] Invalid IP. Default to INADDR_BROADCAST" << endl;
         (this->boardcast_addr).sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        this->sendIP = "255.255.255.255";
     }
 
     this->sock = new_sock;
@@ -51,8 +59,10 @@ bool ResultSenderFunctor::createSocket() {
 
 bool ResultSenderFunctor::operator()(DataQueue<CameraPacket>& resultQueue) {
     createSocket();
+    int frame_count = 0;
+    auto last_fps_time = std::chrono::steady_clock::now();
 
-    while (*(this->isRunning)) {
+    while (((this->isRunning != NULL) && *(this->isRunning))) {
         if (this->needsUpdate) {
             close(this->sock);
             createSocket();
@@ -60,7 +70,9 @@ bool ResultSenderFunctor::operator()(DataQueue<CameraPacket>& resultQueue) {
         }
 
         CameraPacket packet;
-        resultQueue.pop(packet);
+        if (!resultQueue.pop(packet)) {
+            break;
+        }
 
         uint8_t buffer[1024];
         int offset = 0;
@@ -79,6 +91,19 @@ bool ResultSenderFunctor::operator()(DataQueue<CameraPacket>& resultQueue) {
         if (sendto(this->sock, buffer, offset, 0, 
                   (struct sockaddr*)&(this->boardcast_addr), sizeof(this->boardcast_addr)) < 0) {
             cerr << "[SLAVE SENDER] Warning: Unable to send data!" << endl;
+        } else {
+            spdlog::info("[SLAVE SENDER] Packet sent");
+            frame_count++;
+        }
+
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_fps_time).count();
+
+        if (elapsed_ms >= 1000) {
+            spdlog::info("[SLAVE SENDER] Sent FPS: {}", frame_count);
+            
+            frame_count = 0;
+            last_fps_time = now;
         }
     }
 

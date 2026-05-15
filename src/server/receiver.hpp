@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "frameQueue.hpp"
-#include "lib.hpp"
+#include "../lib/frameQueue.hpp"
+#include "../lib/lib.hpp"
 
 using namespace std;
 
@@ -13,7 +13,7 @@ class IngestionBuffer {
         unordered_map<uint32_t, AlignedFrame> buffer;
         mutex mtx;
         uint32_t last_dispatched_frame = 0;
-        const int TOTAL_CAMERAS = 4;
+        const int TOTAL_CAMERAS = 1;
         const int TIMEOUT_MS = 15;
     public:
         IngestionBuffer(DataQueue<AlignedFrame>& queue) : commQueue(queue) {}

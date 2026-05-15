@@ -6,8 +6,9 @@
 #include <fcntl.h>
 #include <cstring>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
-#include "receiver.hpp"
+#include "../receiver.hpp"
 
 void IngestionBuffer::add_packet(const CameraPacket& pkt) {
     lock_guard<mutex> lock(mtx);
@@ -28,7 +29,9 @@ void IngestionBuffer::add_packet(const CameraPacket& pkt) {
 
     buffer[pkt.header.frame_id].camera_data[pkt.header.camera_id] = pkt;
 
+    spdlog::info("[INGESTION BUFFER] ALIGN SIZE: {} - TOTAL_CAM: {}", buffer[pkt.header.frame_id].camera_data.size(), TOTAL_CAMERAS);
     if (buffer[pkt.header.frame_id].camera_data.size() == TOTAL_CAMERAS) {
+        spdlog::info("[INGESTION BUFFER] Dispatching fram from add_packet");
         dispatch_frame(pkt.header.frame_id);
     }
 }
@@ -51,6 +54,7 @@ void IngestionBuffer::check_timeouts() {
 void IngestionBuffer::dispatch_frame(uint32_t frame_id) {
     auto& frame = buffer[frame_id];
 
+    spdlog::info("[INGESTION BUFFER] Pushing to commQueue from dispatch_frame");
     commQueue.push(move(frame));
     buffer.erase(frame_id);
 
@@ -74,22 +78,27 @@ void ReceiverFunctor::changeSocket(ReceiverConfig& rcv_cfg) {
 }
 
 bool ReceiverFunctor::createSocket() {
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sock < 0) {
+    int new_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (new_sock < 0) {
         cerr << "[RECEIVER] Error: Failed to create socket" << endl;
         return false;
     }
 
     int broadcastEnable = 1;
-    if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) < 0) {
+    if (setsockopt(new_sock, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) < 0) {
         cerr << "[RECEIVER] Error: Failed to set socket option (SO_BROADCAST)" << endl;
         return false;
     }
 
     int reuseAddrEnable = 1;
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuseAddrEnable, sizeof(reuseAddrEnable)) < 0) {
+    if (setsockopt(new_sock, SOL_SOCKET, SO_REUSEADDR, &reuseAddrEnable, sizeof(reuseAddrEnable)) < 0) {
         cerr << "[RECEIVER] Failed to config reuse socket" << endl;
     }
+
+    struct timeval read_timeout;
+    read_timeout.tv_sec = 0;
+    read_timeout.tv_usec = 100000; 
+    setsockopt(new_sock, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
 
     struct sockaddr_in recv_addr;
     memset(&recv_addr, 0, sizeof(recv_addr));
@@ -100,15 +109,15 @@ bool ReceiverFunctor::createSocket() {
         cerr << "[RECEIVER] Invalid IP. Default to INADDR_ANY" << endl;
         recv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     }
-    if (bind(sock, (const struct sockaddr*) &recv_addr, sizeof(recv_addr)) < 0) {
+    if (bind(new_sock, (const struct sockaddr*) &recv_addr, sizeof(recv_addr)) < 0) {
         cerr << "[RECEIVER] Error: Failed to bind socket" << endl;
         return false;
     }
-    fcntl(sock, F_SETFL, O_NONBLOCK);
+    fcntl(new_sock, F_SETFL, O_NONBLOCK);
 
     cout << "[RECEIVER] Socket is listening for broadcasts on port " << this->receivePort << endl;
 
-    this->sock = sock;
+    this->sock = new_sock;
 
     return true;
 }
@@ -121,7 +130,10 @@ bool ReceiverFunctor::operator()(DataQueue<AlignedFrame>& queue) {
     CameraPacket pkt;
     uint8_t rawBuffer[1500];
 
-    while (*(this->isRunning)) {
+    int packet_count = 0;
+    auto last_fps_time = chrono::steady_clock::now();
+
+    while (((this->isRunning != NULL) && *(this->isRunning))) {
         if (this->needsUpdate) {
             close(sock);
             createSocket();
@@ -130,9 +142,12 @@ bool ReceiverFunctor::operator()(DataQueue<AlignedFrame>& queue) {
 
         int bytes_read = recvfrom(sock, rawBuffer, sizeof(rawBuffer), 0, NULL, NULL);
         
+
         if (bytes_read > 0) {
             CameraPacketHeader* pktHeader = reinterpret_cast<CameraPacketHeader*>(rawBuffer);
             int expectedSize = sizeof(CameraPacketHeader) + sizeof(CenterPacket) * pktHeader->centerCount;
+            spdlog::info("[RECEIVER] Bytes read: {}, expected {}", bytes_read, expectedSize);
+            spdlog::info("[RECEIVER] Parsed header info: mid {} - fid {} - center cnt {} - cap time {}", pktHeader->captureTime, pktHeader->frame_id, pktHeader->centerCount, pktHeader->captureTime);
             if (expectedSize == bytes_read) {
                 pkt.header.captureTime = pktHeader->captureTime;
                 pkt.header.frame_id = pktHeader->frame_id;
@@ -143,8 +158,23 @@ bool ReceiverFunctor::operator()(DataQueue<AlignedFrame>& queue) {
                 pkt.centers.clear();
                 pkt.centers.assign(arr, arr + pktHeader->centerCount);
                 
+                spdlog::info("[RECEIVER] Calling add_packet() ###############################");
                 align_buffer.add_packet(pkt);
+
+                packet_count++;
             }
+        }
+
+        auto now = chrono::steady_clock::now();
+        auto elapsed_ms = chrono::duration_cast<chrono::milliseconds>(now - last_fps_time).count();
+
+        if (elapsed_ms >= 1000) {
+            spdlog::info("[RECEIVER] Received: {} packets/s", packet_count);
+            // Nếu dùng spdlog: 
+            // spdlog::info("[SERVER RECEIVER] Received: {} packets/s", packet_count);
+
+            packet_count = 0;    // Reset bộ đếm
+            last_fps_time = now; // Cập nhật lại mốc thời gian
         }
 
         align_buffer.check_timeouts();

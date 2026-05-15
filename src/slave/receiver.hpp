@@ -10,18 +10,10 @@
 #include <mutex>
 #include <string>
 
-#include "frameQueue.hpp"
-#include "lib.hpp"
+#include "../lib/frameQueue.hpp"
+#include "../lib/lib.hpp"
 
 using namespace std;
-
-#pragma pack(push, 1)
-struct FutureTriggerPacket {
-    char header[4];          
-    uint32_t frame_id;          
-    uint64_t target_time_us;
-};
-#pragma pack(pop)
 
 class ReceiverFunctor {
     private:

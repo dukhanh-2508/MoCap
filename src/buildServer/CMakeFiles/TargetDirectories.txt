@@ -1,0 +1,3 @@
+/home/khanh/Programming/Thesis/Thesis_1/src/buildServer/CMakeFiles/MocapServer.dir
+/home/khanh/Programming/Thesis/Thesis_1/src/buildServer/CMakeFiles/edit_cache.dir
+/home/khanh/Programming/Thesis/Thesis_1/src/buildServer/CMakeFiles/rebuild_cache.dir

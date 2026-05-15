@@ -8,8 +8,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "lib.hpp"
-#include "frameQueue.hpp"
+#include "../lib/lib.hpp"
+#include "../lib/frameQueue.hpp"
 
 using namespace std;
 

@@ -76,3 +76,12 @@ struct FutureTriggerPacket {
     uint64_t target_time_us;
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct {
+    int32_t m_id;
+    float x;       
+    float y;    
+    float z;
+} ProcessedPoint;
+#pragma pack(pop)

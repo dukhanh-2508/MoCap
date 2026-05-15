@@ -1,0 +1,3 @@
+/home/khanh/Programming/Thesis/Thesis_1/src/buildSlave/CMakeFiles/MocapSlave.dir
+/home/khanh/Programming/Thesis/Thesis_1/src/buildSlave/CMakeFiles/edit_cache.dir
+/home/khanh/Programming/Thesis/Thesis_1/src/buildSlave/CMakeFiles/rebuild_cache.dir
