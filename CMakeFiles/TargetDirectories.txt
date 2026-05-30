@@ -1,3 +1,0 @@
-/home/khanh/Programming/Thesis/Thesis_1/CMakeFiles/main.dir
-/home/khanh/Programming/Thesis/Thesis_1/CMakeFiles/edit_cache.dir
-/home/khanh/Programming/Thesis/Thesis_1/CMakeFiles/rebuild_cache.dir
