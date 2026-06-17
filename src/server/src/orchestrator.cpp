@@ -69,7 +69,7 @@ bool OrchestratorFunctor::operator()() {
     float loopDelay = 1000 / FPS;
     const chrono::milliseconds loop_delay((int) loopDelay);
 
-    while (((this->isRunning != NULL) && *(this->isRunning))) {
+    while (((this->isRunning != NULL) && *(this->isRunning))){
         if (this->needsUpdate) {
             close(sock);
             createSocket();
