@@ -27,12 +27,17 @@ int main() {
     CameraConfig cmr_cfg = {
         .glcfg = glcfg,
     };
+    CameraParameters paras = {
+        .frameWidth = 1280,
+        .frameHeight = 780,
+        .cameraFPS = 30,
+    };
 
     DataQueue<FutureTriggerPacket> cmdQueue;
     DataQueue<CameraPacket> resultQueue;
 
     ReceiverFunctor rcv(rcv_cfg);
-    MarkerDetectorFunctor prs(cmr_cfg);
+    MarkerDetectorFunctor prs(cmr_cfg, paras);
     ResultSenderFunctor snd(snd_cfg);
 
     thread rcvThread(ref(rcv), ref(cmdQueue));

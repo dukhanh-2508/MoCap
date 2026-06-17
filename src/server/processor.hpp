@@ -14,19 +14,6 @@
 
 using namespace std;
 
-// Ép C++ đóng gói chặt chẽ cấu trúc bộ nhớ phẳng, không chèn byte rác
-#pragma pack(push, 1)
-struct MoCapBinaryPoint {
-    int32_t id;      // 4 bytes
-    float x;         // 4 bytes
-    float y;         // 4 bytes
-    float z;         // 4 bytes
-};                   // Tổng cộng: Đúng 16 bytes vật lý chuẩn mã hóa mạng
-#pragma pack(pop)
-
-// ============================================================================
-// I. LỚP CƠ SỞ TOÁN HỌC: PROCESSOR3D (SVD CHUẨN ĐÉT)
-// ============================================================================
 class Processor3D {
     private:
         cv::Mat P1, P2;
@@ -72,29 +59,10 @@ class Processor3D {
             P2 = K * Rt2;
         }
 
-        vector<ProcessedPoint> triangulate(const AlignedFrame& frame) {
-            vector<ProcessedPoint> results;
-            for (size_t i = 0; i < frame.marker_ids.size(); ++i) {
-                int id = frame.marker_ids[i];
-                cv::Point2f pt1 = frame.cam1_points[i];
-                cv::Point2f pt2 = frame.cam2_points[i];
-
-                cv::Point3d pt3d = triangulate_dlt_point(pt1, pt2);
-
-                ProcessedPoint p_out;
-                p_out.id = id;
-                p_out.x = pt3d.x;
-                p_out.y = pt3d.y;
-                p_out.z = pt3d.z;
-                results.push_back(p_out);
-            }
-            return results;
-        }
+        vector<ProcessedPoint> triangulate(const AlignedFrame& frame);
 };
 
-// ============================================================================
-// II. LỚP ĐIỀU PHỐI LUỒNG MẠNG: PROCESSORFUNCTOR (BẮN MULTIPART ĐỒNG BỘ PYTHON)
-// ============================================================================
+
 class ProcessorFunctor {
     private:
         bool* isRunning;
@@ -107,75 +75,11 @@ class ProcessorFunctor {
         zmq::socket_t* zmq_pub;
 
     public:
-        ProcessorFunctor(ProcessorConfig& cfg) {
-            isRunning = cfg.isRunning;
-            sendPort = cfg.port;
-            sendIP = cfg.ip;
-            needsUpdate = false;
+        ProcessorFunctor(ProcessorConfig& prs_cfg);
 
-            zmq_ctx = new zmq::context_t(1);
-            zmq_pub = new zmq::socket_t(*zmq_ctx, zmq::socket_type::pub);
-            string address = "tcp://" + sendIP + ":" + to_string(sendPort);
-            zmq_pub->bind(address);
-        }
+        ~ProcessorFunctor();
 
-        ~ProcessorFunctor() {
-            zmq_pub->close();
-            delete zmq_pub;
-            delete zmq_ctx;
-        }
+        void changeConnection(ProcessorConfig& prs_cfg);
 
-        bool operator()(DataQueue<AlignedFrame>& queue) {
-            Processor3D triangulator;
-
-            while (*isRunning) {
-                AlignedFrame frame;
-
-                if (needsUpdate) {
-                    lock_guard<mutex> lock(configMtx);
-                    zmq_pub->disconnect("tcp://" + sendIP + ":" + to_string(sendPort));
-                    string new_address = "tcp://" + sendIP + ":" + to_string(sendPort);
-                    zmq_pub->bind(new_address);
-                    needsUpdate = false;
-                }
-
-                if (queue.pop(frame)) {
-                    // 1. Giải toán tái tạo hình học 3D ra vector tọa độ thực
-                    vector<ProcessedPoint> points_3d = triangulator.triangulate(frame);
-
-                    // 2. DUYỆT QUA TỪNG POINT ĐỂ BẮN MULTIPART CHUẨN BINARY SANG PYTHON
-                    for (const auto& p : points_3d) {
-
-                        // PHẦN 1: Bắn Topic Byte (Khớp chuẩn MOCAP_CHANNEL = b'\x01' của Python)
-                        uint8_t topic_byte = 0x01;
-                        zmq::message_t msg_topic(sizeof(topic_byte));
-                        memcpy(msg_topic.data(), &topic_byte, sizeof(topic_byte));
-
-                        // Bật cờ ZMQ_SNDMORE báo cho mạng biết: "Còn phần Payload nhị phân đi sau"
-                        zmq_pub->send(msg_topic, zmq::send_flags::sndmore);
-
-                        // PHẦN 2: Đóng gói đúng Struct nhị phân phẳng 16 bytes
-                        MoCapBinaryPoint bin_pt;
-                        bin_pt.id = static_cast<int32_t>(p.id);
-                        bin_pt.x  = static_cast<float>(p.x);
-                        bin_pt.y  = static_cast<float>(p.y);
-                        bin_pt.z  = static_cast<float>(p.z);
-
-                        zmq::message_t msg_payload(sizeof(MoCapBinaryPoint));
-                        memcpy(msg_payload.data(), &bin_pt, sizeof(MoCapBinaryPoint));
-
-                        // Gửi nốt phần Payload, kết thúc một gói Multipart tin nhắn mạng
-                        zmq_pub->send(msg_payload, zmq::send_flags::none);
-                    }
-                }
-            }
-            return true;
-        }
-
-        void changeConnection(ProcessorConfig& prs_cfg) {
-            lock_guard<mutex> lock(configMtx);
-            sendIP = prs_cfg.ip;
-            sendPort = prs_cfg.port;
-            needsUpdate = true;
-        }
+        bool operator()(DataQueue<AlignedFrame>& queue);
 };

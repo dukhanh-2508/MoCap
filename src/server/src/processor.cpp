@@ -6,7 +6,6 @@
 
 #include "../processor.hpp"
 
-// --- LOGIC XỬ LÝ 2D SANG 3D (ÉP Z = 0) ---
 vector<ProcessedPoint> Processor3D::triangulate(const AlignedFrame& frame) {
     vector<ProcessedPoint> points3D;
 
@@ -41,6 +40,12 @@ ProcessorFunctor::ProcessorFunctor(ProcessorConfig& cfg) {
     this->sendIP = cfg.prs_ip;
     this->sendPort = cfg.prs_port;
     this->needsUpdate = false;
+}
+
+ProcessorFunctor::~ProcessorFunctor() {
+    zmq_pub->close();
+    delete zmq_pub;
+    delete zmq_ctx;
 }
 
 void ProcessorFunctor::changeConnection(ProcessorConfig& prs_cfg) {

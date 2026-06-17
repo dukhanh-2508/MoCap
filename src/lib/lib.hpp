@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// ==== Network config struct === //
 typedef struct {
     bool is_running;
     int module_id;
@@ -39,7 +40,7 @@ typedef struct {
     string prs_ip;
 } ProcessorConfig;
 
-
+// ==== Data packet struct === //
 #pragma pack(push, 1)
 typedef struct {
     uint8_t object_id;
@@ -68,7 +69,6 @@ typedef struct {
     unordered_map<uint8_t, CameraPacket> camera_data;
 } AlignedFrame;
 
-
 #pragma pack(push, 1)
 struct FutureTriggerPacket {
     char header[4];          
@@ -85,3 +85,10 @@ typedef struct {
     float z;
 } ProcessedPoint;
 #pragma pack(pop)
+
+// === Camera Parameters === //
+typedef struct {
+    uint16_t frameWidth;
+    uint16_t frameHeight;
+    uint16_t cameraFPS;
+} CameraParameters;

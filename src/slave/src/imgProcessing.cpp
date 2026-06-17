@@ -3,17 +3,30 @@
 #include <thread>
 #include <cmath>
 #include <spdlog/spdlog.h>
+#include <opencv2/opencv.hpp>
 
 #include "../imgProcessing.hpp"
+#include "../locateMarker.hpp"
 
-MarkerDetectorFunctor::MarkerDetectorFunctor(CameraConfig& cfg) {
+MarkerDetectorFunctor::MarkerDetectorFunctor(CameraConfig& cfg, CameraParameters& paras) {
     this->isRunning = &(cfg.glcfg.is_running);
     this->module_id = cfg.glcfg.module_id;
+    this->cameraFPS = &(paras.cameraFPS);
+    this->frameWidth = &(paras.frameWidth);
+    this->frameHeight = &(paras.frameHeight);
 }
 
 bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQueue,
                                         DataQueue<CameraPacket>& resultQueue) {
     MarkerDetector detector;
+    cv::Mat capturedImg(*(this->frameWidth), *(this->frameHeight), CV_8UC3);
+    cv::VideoCapture camera;
+    // Config camera
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, *(this->frameWidth));
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, *(this->frameHeight));
+    camera.set(cv::CAP_PROP_FPS, *(this->cameraFPS));
+
+    ImgProcessor processor;
 
     while (((this->isRunning != NULL) && *(this->isRunning))) {
         FutureTriggerPacket packet;
@@ -30,34 +43,50 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
             if (target_tp > now) {
                 auto wait_duration = target_tp - now;
 
+                // Sleep when there's plenty of time before targetTime
                 if (wait_duration > chrono::milliseconds(2)) {
                     this_thread::sleep_until(target_tp - chrono::milliseconds(1));
                 }
 
+                // Continously poll time when close to targetTime
                 while (((this->isRunning != NULL) && *(this->isRunning))) {
                     now = chrono::system_clock::now();
                     uint64_t now_us = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count(); 
 
-                    if (now_us >= targetTime) {
-                        captureTime = now_us;
-                        
-                        spdlog::info("[SLAVE PROCESSOR] Set to capture at {}\nCapture at {}", targetTime, now_us);
+                    if (now_us >= targetTime) { // Capture image
+                        if(camera.grab()) {
+                            captureTime = now_us;
+                            spdlog::info("[SLAVE PROCESSOR] Set to capture at {}\nCapture at {}", targetTime, now_us);
+
+                            camera.retrieve(capturedImg);
+                        } else {
+                            spdlog::error("[SLAVE PROCESSOR] Failed to capture image");
+                            continue;
+                        }
 
                         break;
                     }
                 }
-            } else {
-                now = chrono::system_clock::now();
-                captureTime = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count();
+            } else { // Capture image
+                if(camera.grab()) {
+                    now = chrono::system_clock::now();
+                    captureTime = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count();
+                    spdlog::info("[SLAVE PROCESSOR] Set to capture at {}\nCapture at {}", targetTime, captureTime);
+
+                    camera.retrieve(capturedImg);
+                } else {
+                    spdlog::error("[SLAVE PROCESSOR] Failed to capture image");
+                    continue;
+                }
             }
 
             if (!*(this->isRunning)) break;
 
-            vector<CenterPacket> centers;
+            vector<CenterPacket> centers = processor.process_frame(capturedImg);
 
             // Dummy data gen
-            const uint8_t NUM_MARKERS = 3;
-            
+            /*
+            const uint8_t NUM_MARKERS = 3;        
             for (uint8_t i = 0; i < NUM_MARKERS; i++) {
                 CenterPacket pt;
                 pt.object_id = i;
@@ -91,7 +120,8 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
                 
                 centers.push_back(pt);
             }
-
+            */
+           
             CameraPacketHeader header = {
                 captureTime,
                 frame_id,
