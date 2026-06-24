@@ -2,11 +2,18 @@
 #include <cstring>
 #include <thread>
 #include <cmath>
+#include <filesystem>
+#include <string>
+#include <vector>
+#include <cstdio>
 #include <spdlog/spdlog.h>
 #include <opencv2/opencv.hpp>
 
 #include "../imgProcessing.hpp"
 #include "../locateMarker.hpp"
+
+namespace fs = std::filesystem;
+using namespace std;
 
 MarkerDetectorFunctor::MarkerDetectorFunctor(CameraConfig& cfg, CameraParameters& paras) {
     this->isRunning = &(cfg.glcfg.is_running);
@@ -16,11 +23,39 @@ MarkerDetectorFunctor::MarkerDetectorFunctor(CameraConfig& cfg, CameraParameters
     this->frameHeight = &(paras.frameHeight);
 }
 
+void saveCompressedFrameToRAM(const cv::Mat& frame, uint32_t frame_id, uint8_t camera_id) {
+    // 1. Khai báo đường dẫn đích trên RAM
+    const string ram_dir = "/dev/shm/mocap_frames";
+
+    // 2. Tạo thư mục nếu chưa tồn tại (chỉ chạy 1 lần lúc bắt đầu)
+    if (!fs::exists(ram_dir)) {
+        fs::create_directory(ram_dir);
+    }
+
+    // 3. Định dạng tên file đồng nhất để dễ quản lý: frame_00123_cam_1.jpg
+    char filepath[256];
+    snprintf(filepath, sizeof(filepath), "%s/frame_%06u_cam_%d.jpg", ram_dir.c_str(), frame_id, camera_id);
+
+    // 4. Cấu hình thông số nén JPEG
+    // Chất lượng chạy từ 0 - 100. (Mặc định của OpenCV là 95).
+    // Với ảnh MoCap (thường chỉ lấy luồng LED sáng hoặc marker), mức 75-80 là đủ rõ và siêu nhẹ.
+    vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(100); 
+
+    // 5. Ghi ảnh trực tiếp vào ổ RAM
+    cv::imwrite(filepath, frame, compression_params);
+}
+
 bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQueue,
                                         DataQueue<CameraPacket>& resultQueue) {
     MarkerDetector detector;
     cv::Mat capturedImg(*(this->frameWidth), *(this->frameHeight), CV_8UC3);
-    cv::VideoCapture camera;
+    cv::VideoCapture camera(0, cv::CAP_V4L2);
+    if (!camera.isOpened()) {
+        spdlog::error("[SLAVE PROCESSOR] FATAL: Cannot open camera 0!");
+        return false; // Thoát luôn luồng nếu không mở được cam
+    }
     // Config camera
     camera.set(cv::CAP_PROP_FRAME_WIDTH, *(this->frameWidth));
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, *(this->frameHeight));
@@ -31,6 +66,7 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
     while (((this->isRunning != NULL) && *(this->isRunning))) {
         FutureTriggerPacket packet;
         if (commandQueue.pop(packet)) {
+            spdlog::info("[SLAVE PROCESSOR] Received command, preparing");
             char command[4];
             memcpy(command, packet.header, 4);
             uint32_t frame_id = packet.frame_id;
@@ -41,6 +77,7 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
             auto now = chrono::system_clock::now();
 
             if (target_tp > now) {
+                spdlog::info("[SLAVE PROCESSOR] Timing");
                 auto wait_duration = target_tp - now;
 
                 // Sleep when there's plenty of time before targetTime
@@ -80,11 +117,15 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
                 }
             }
 
-            if (!*(this->isRunning)) break;
+            saveCompressedFrameToRAM(capturedImg, packet.frame_id, this->module_id);
 
+
+            if (!*(this->isRunning)) break;
+            /*
             vector<CenterPacket> centers = processor.process_frame(capturedImg);
 
             // Dummy data gen
+            */
             /*
             const uint8_t NUM_MARKERS = 3;        
             for (uint8_t i = 0; i < NUM_MARKERS; i++) {
@@ -121,7 +162,7 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
                 centers.push_back(pt);
             }
             */
-           
+            /*
             CameraPacketHeader header = {
                 captureTime,
                 frame_id,
@@ -140,7 +181,9 @@ bool MarkerDetectorFunctor::operator()(DataQueue<FutureTriggerPacket>& commandQu
         } else {
             this_thread::sleep_for(chrono::microseconds(100));
         }
+        */
+            this_thread::sleep_for(chrono::microseconds(100));
+        }        
     }
-
     return true;
 }

@@ -21,8 +21,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define BIT_ARRAY_LEN 10
-#define MAX_VALUE ((1U << BIT_ARRAY_LEN) - 1)
+#define BIT_ARRAY_LEN 				15
+#define MAX_VALUE 					((1U << BIT_ARRAY_LEN) - 1)
+
+// States of the device
+#define REF_STATE 					0x0001 // All LED light up
+#define MEASURE_STATE 				0x0002 // LED constantly turn on and off to show counter value
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,16 +47,15 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
-DMA_HandleTypeDef hdma_tim1_up;
 
 /* USER CODE BEGIN PV */
-uint16_t block[MAX_VALUE + 1] = {0};
+volatile uint64_t counter = 0;
+volatile uint32_t currentState = REF_STATE;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -91,30 +95,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
-  // Create beforehand the count values
-  for(uint16_t i = 0; i <= MAX_VALUE; i++) {
-	  block[i] = i;
-  }
-
-  HAL_DMA_Start(&hdma_tim1_up, (uint32_t)block, (uint32_t)&(GPIOA->ODR), MAX_VALUE + 1);
-
-  // Allow update events from TIM1 to go to DMA
-  __HAL_TIM_ENABLE_DMA(&htim1, TIM_DMA_UPDATE);
-
-  // Start timer
-  HAL_TIM_Base_Start(&htim1);
+  HAL_TIM_Base_Start_IT(&htim1);
+  __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_UPDATE);
+  counter = 0;
+  GPIOA->BSRR = (uint32_t) 0xFFFF;
+  GPIOB->BSRR = (uint32_t) 0x0003;
+  currentState = REF_STATE;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  while (1) {
+	  HAL_Delay(2000);
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -187,7 +182,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 8400 - 1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 9;
+  htim1.Init.Period = 19;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -213,22 +208,6 @@ static void MX_TIM1_Init(void)
 }
 
 /**
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void)
-{
-
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA2_CLK_ENABLE();
-
-  /* DMA interrupt init */
-  /* DMA2_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -244,22 +223,46 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
-                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10, GPIO_PIN_RESET);
+                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
+                          |GPIO_PIN_12, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PA0 PA1 PA2 PA3
                            PA4 PA5 PA6 PA7
-                           PA8 PA9 PA10 */
+                           PA8 PA9 PA10 PA11
+                           PA12 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
-                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10;
+                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
+                          |GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB0 PB1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -267,6 +270,41 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	if (currentState == MEASURE_STATE) {
+	  if (htim->Instance == TIM1) {
+		  uint32_t val_A = counter & 0x1FFF;
+		  GPIOA->BSRR = val_A | ((~val_A & 0x1FFF) << 16);
+		  uint32_t val_B = (counter >> 13) & 0x0003;
+		  GPIOB->BSRR = val_B | ((~val_B & 0x0003) << 16);
+		  counter = (counter + 1) & MAX_VALUE;
+	  }
+	}
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	static uint32_t lastTime = 0;
+	uint32_t currentTime = HAL_GetTick();
+
+	if (currentTime - lastTime > 1000) {
+		if(GPIO_Pin == GPIO_PIN_8) {
+			if (currentState == REF_STATE) {
+				currentState = MEASURE_STATE;
+				counter = 0;
+				GPIOA->BSRR = (uint32_t) (0xFFFF << 16);
+				GPIOB->BSRR = (uint32_t) (0x0003 << 16);
+				__HAL_TIM_SET_COUNTER(&htim1, 0);
+				__HAL_TIM_ENABLE_IT(&htim1, TIM_IT_UPDATE);
+			} else {
+				__HAL_TIM_DISABLE_IT(&htim1, TIM_IT_UPDATE);
+				GPIOA->BSRR = (uint32_t) 0xFFFF;
+				GPIOB->BSRR = (uint32_t) 0x0003;
+				currentState = REF_STATE;
+			}
+		}
+		lastTime = currentTime;
+	}
+}
 
 /* USER CODE END 4 */
 

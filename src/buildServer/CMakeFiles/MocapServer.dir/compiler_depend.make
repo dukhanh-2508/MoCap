@@ -1708,14 +1708,38 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
 
-MocapServer: /lib/x86_64-linux-gnu/libbsd.so.0 \
+MocapServer: /lib/i386-linux-gnu/libGLX.so.0 \
+  /lib/i386-linux-gnu/libGLdispatch.so.0 \
+  /lib/i386-linux-gnu/libX11.so.6 \
+  /lib/i386-linux-gnu/libXau.so.6 \
+  /lib/i386-linux-gnu/libXdmcp.so.6 \
+  /lib/i386-linux-gnu/libbsd.so.0 \
+  /lib/i386-linux-gnu/libcom_err.so.2 \
+  /lib/i386-linux-gnu/libgssapi_krb5.so.2 \
+  /lib/i386-linux-gnu/libk5crypto.so.3 \
+  /lib/i386-linux-gnu/libkeyutils.so.1 \
+  /lib/i386-linux-gnu/libkrb5.so.3 \
+  /lib/i386-linux-gnu/libkrb5support.so.0 \
+  /lib/i386-linux-gnu/libmd.so.0 \
+  /lib/i386-linux-gnu/libresolv.so.2 \
+  /lib/i386-linux-gnu/libxcb.so.1 \
+  /lib/i386-linux-gnu/libz.so.1 \
+  /lib/x86_64-linux-gnu/libGLX.so.0 \
+  /lib/x86_64-linux-gnu/libGLdispatch.so.0 \
+  /lib/x86_64-linux-gnu/libX11.so.6 \
+  /lib/x86_64-linux-gnu/libXau.so.6 \
+  /lib/x86_64-linux-gnu/libXdmcp.so.6 \
+  /lib/x86_64-linux-gnu/libblas.so.3 \
+  /lib/x86_64-linux-gnu/libbsd.so.0 \
   /lib/x86_64-linux-gnu/libc.so.6 \
   /lib/x86_64-linux-gnu/libcom_err.so.2 \
+  /lib/x86_64-linux-gnu/libgfortran.so.5 \
   /lib/x86_64-linux-gnu/libgssapi_krb5.so.2 \
   /lib/x86_64-linux-gnu/libk5crypto.so.3 \
   /lib/x86_64-linux-gnu/libkeyutils.so.1 \
   /lib/x86_64-linux-gnu/libkrb5.so.3 \
   /lib/x86_64-linux-gnu/libkrb5support.so.0 \
+  /lib/x86_64-linux-gnu/liblapack.so.3 \
   /lib/x86_64-linux-gnu/libm.so.6 \
   /lib/x86_64-linux-gnu/libmd.so.0 \
   /lib/x86_64-linux-gnu/libmvec.so.1 \
@@ -1723,6 +1747,9 @@ MocapServer: /lib/x86_64-linux-gnu/libbsd.so.0 \
   /lib/x86_64-linux-gnu/libpgm-5.3.so.0 \
   /lib/x86_64-linux-gnu/libresolv.so.2 \
   /lib/x86_64-linux-gnu/libsodium.so.23 \
+  /lib/x86_64-linux-gnu/libtbb.so.12 \
+  /lib/x86_64-linux-gnu/libxcb.so.1 \
+  /lib/x86_64-linux-gnu/libz.so.1 \
   /lib64/ld-linux-x86-64.so.2 \
   /usr/lib/x86_64-linux-gnu/Scrt1.o \
   /usr/lib/x86_64-linux-gnu/crti.o \
@@ -1736,8 +1763,79 @@ MocapServer: /lib/x86_64-linux-gnu/libbsd.so.0 \
   /usr/lib/gcc/x86_64-linux-gnu/14/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/14/libgcc_s.so \
   /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
+  /usr/lib/i386-linux-gnu/libGLX.so.0 \
+  /usr/lib/i386-linux-gnu/libGLdispatch.so.0 \
+  /usr/lib/i386-linux-gnu/libX11.so.6 \
+  /usr/lib/i386-linux-gnu/libXau.so.6 \
+  /usr/lib/i386-linux-gnu/libXdmcp.so.6 \
+  /usr/lib/i386-linux-gnu/libbsd.so.0 \
+  /usr/lib/i386-linux-gnu/libcom_err.so.2 \
+  /usr/lib/i386-linux-gnu/libgssapi_krb5.so.2 \
+  /usr/lib/i386-linux-gnu/libk5crypto.so.3 \
+  /usr/lib/i386-linux-gnu/libkeyutils.so.1 \
+  /usr/lib/i386-linux-gnu/libkrb5.so.3 \
+  /usr/lib/i386-linux-gnu/libkrb5support.so.0 \
+  /usr/lib/i386-linux-gnu/libmd.so.0 \
+  /usr/lib/i386-linux-gnu/libresolv.so.2 \
+  /usr/lib/i386-linux-gnu/libxcb.so.1 \
+  /usr/lib/i386-linux-gnu/libz.so.1 \
   /usr/lib/x86_64-linux-gnu/libc_nonshared.a \
   /usr/lib/x86_64-linux-gnu/libfmt.so.10.1.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_alphamat.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_aruco.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_bgsegm.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_bioinspired.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_calib3d.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_ccalib.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_core.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_cvv.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_datasets.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_dnn.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_dnn_objdetect.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_dnn_superres.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_dpm.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_face.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_features2d.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_flann.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_freetype.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_fuzzy.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_hdf.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_hfs.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_highgui.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_img_hash.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_imgcodecs.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_intensity_transform.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_line_descriptor.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_mcc.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_ml.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_objdetect.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_optflow.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_phase_unwrapping.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_plot.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_quality.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_rapid.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_reg.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_rgbd.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_saliency.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_shape.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_signal.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_stereo.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_stitching.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_structured_light.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_superres.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_surface_matching.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_text.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_tracking.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_video.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_videostab.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_viz.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_wechat_qrcode.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_ximgproc.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_xobjdetect.so.4.10.0 \
+  /usr/lib/x86_64-linux-gnu/libopencv_xphoto.so.4.10.0 \
   /usr/lib/x86_64-linux-gnu/libspdlog.so.1.15.1 \
   CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/main.cpp.o \
   CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/orchestrator.cpp.o \
@@ -1751,7 +1849,97 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/lib/x86_64-linux-gnu/libspdlog.so.1.15.1:
 
+/usr/lib/x86_64-linux-gnu/libopencv_xobjdetect.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_wechat_qrcode.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_viz.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_video.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_text.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_surface_matching.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_structured_light.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_stitching.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_signal.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_saliency.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_quality.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_plot.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_optflow.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_ml.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_line_descriptor.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_imgcodecs.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_img_hash.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_highgui.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_hfs.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_hdf.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_fuzzy.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_freetype.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_flann.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_features2d.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_face.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_datasets.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_cvv.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_core.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_bgsegm.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_aruco.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_alphamat.so.4.10.0:
+
 /usr/lib/x86_64-linux-gnu/libfmt.so.10.1.0:
+
+/usr/lib/i386-linux-gnu/libxcb.so.1:
+
+/usr/lib/i386-linux-gnu/libresolv.so.2:
+
+/usr/lib/i386-linux-gnu/libmd.so.0:
+
+/usr/lib/i386-linux-gnu/libkrb5support.so.0:
+
+/usr/lib/i386-linux-gnu/libkrb5.so.3:
+
+/usr/lib/i386-linux-gnu/libkeyutils.so.1:
+
+/usr/lib/i386-linux-gnu/libk5crypto.so.3:
+
+/usr/lib/i386-linux-gnu/libgssapi_krb5.so.2:
+
+/usr/lib/i386-linux-gnu/libcom_err.so.2:
+
+/usr/lib/i386-linux-gnu/libbsd.so.0:
+
+/usr/lib/i386-linux-gnu/libXdmcp.so.6:
+
+/usr/lib/i386-linux-gnu/libXau.so.6:
+
+/usr/lib/i386-linux-gnu/libGLdispatch.so.0:
+
+/usr/lib/i386-linux-gnu/libGLX.so.0:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so:
 
@@ -1765,6 +1953,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/lib/x86_64-linux-gnu/libm.so:
 
+/lib/x86_64-linux-gnu/libtbb.so.12:
+
 /lib/x86_64-linux-gnu/libsodium.so.23:
 
 /lib/x86_64-linux-gnu/libnorm.so.1:
@@ -1773,6 +1963,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /lib/x86_64-linux-gnu/libm.so.6:
 
+/lib/x86_64-linux-gnu/liblapack.so.3:
+
 /lib/x86_64-linux-gnu/libkrb5.so.3:
 
 /lib/x86_64-linux-gnu/libkeyutils.so.1:
@@ -1780,6 +1972,22 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /lib/x86_64-linux-gnu/libgssapi_krb5.so.2:
 
 /lib/x86_64-linux-gnu/libc.so.6:
+
+/lib/x86_64-linux-gnu/libXdmcp.so.6:
+
+/lib/x86_64-linux-gnu/libXau.so.6:
+
+/lib/x86_64-linux-gnu/libxcb.so.1:
+
+/lib/x86_64-linux-gnu/libGLdispatch.so.0:
+
+/lib/i386-linux-gnu/libkrb5support.so.0:
+
+/lib/i386-linux-gnu/libkeyutils.so.1:
+
+/lib/i386-linux-gnu/libgssapi_krb5.so.2:
+
+/lib/i386-linux-gnu/libcom_err.so.2:
 
 /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
 
@@ -1805,7 +2013,11 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/core/bufferpool.hpp:
 
+/lib/i386-linux-gnu/libresolv.so.2:
+
 /usr/include/opencv4/opencv2/objdetect/charuco_detector.hpp:
+
+/usr/lib/x86_64-linux-gnu/libopencv_dpm.so.4.10.0:
 
 /usr/include/c++/14/functional:
 
@@ -1823,6 +2035,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/linux/close_range.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_tracking.so.4.10.0:
+
 /usr/include/ctype.h:
 
 /usr/include/c++/14/pstl/execution_defs.h:
@@ -1835,9 +2049,15 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/c++/14/tuple:
 
+/lib/i386-linux-gnu/libXau.so.6:
+
 /usr/include/opencv4/opencv2/opencv.hpp:
 
+/usr/lib/x86_64-linux-gnu/libopencv_stereo.so.4.10.0:
+
 /usr/include/c++/14/tr1/modified_bessel_func.tcc:
+
+/lib/i386-linux-gnu/libGLdispatch.so.0:
 
 /usr/include/c++/14/tr1/gamma.tcc:
 
@@ -1883,6 +2103,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/flann/sampling.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_superres.so.4.10.0:
+
 /usr/include/c++/14/list:
 
 /usr/include/c++/14/bits/char_traits.h:
@@ -1890,6 +2112,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/c++/14/iomanip:
 
 /usr/include/c++/14/bits/functional_hash.h:
+
+/lib/i386-linux-gnu/libmd.so.0:
 
 /usr/include/c++/14/initializer_list:
 
@@ -1902,6 +2126,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/c++/14/ext/string_conversions.h:
 
 /usr/include/c++/14/ext/concurrence.h:
+
+/lib/x86_64-linux-gnu/libgfortran.so.5:
 
 /usr/include/c++/14/ext/atomicity.h:
 
@@ -1942,6 +2168,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/c++/14/cstdio:
 
 /usr/include/c++/14/bits/utility.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_shape.so.4.10.0:
 
 /usr/include/c++/14/cstdint:
 
@@ -1999,6 +2227,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/c++/14/bits/erase_if.h:
 
+/lib/i386-linux-gnu/libz.so.1:
+
 /usr/include/c++/14/bits/enable_special_members.h:
 
 /usr/include/c++/14/bits/std_function.h:
@@ -2022,6 +2252,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/c++/14/tr1/riemann_zeta.tcc:
 
 /usr/include/c++/14/bits/basic_string.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_videostab.so.4.10.0:
 
 /usr/lib/x86_64-linux-gnu/crti.o:
 
@@ -2175,6 +2407,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/spdlog/logger.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_xphoto.so.4.10.0:
+
 /usr/include/opencv4/opencv2/flann/timer.h:
 
 /usr/include/c++/14/bits/stl_tree.h:
@@ -2271,6 +2505,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/c++/14/bits/locale_facets_nonio.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_bioinspired.so.4.10.0:
+
 /usr/include/c++/14/bits/stl_multimap.h:
 
 /usr/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp:
@@ -2339,9 +2575,15 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/spdlog/pattern_formatter.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_dnn_superres.so.4.10.0:
+
+/lib/i386-linux-gnu/libbsd.so.0:
+
 /usr/include/c++/14/bits/parse_numbers.h:
 
 /usr/include/asm-generic/errno.h:
+
+/lib/i386-linux-gnu/libXdmcp.so.6:
 
 /usr/include/c++/14/bits/predefined_ops.h:
 
@@ -2373,6 +2615,10 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
+/lib/x86_64-linux-gnu/libblas.so.3:
+
+/lib/i386-linux-gnu/libxcb.so.1:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
 
 /usr/include/c++/14/pstl/pstl_config.h:
@@ -2384,6 +2630,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h:
 
 /usr/include/c++/14/bits/stl_heap.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.10.0:
 
 /usr/include/c++/14/bits/stl_iterator_base_types.h:
 
@@ -2417,6 +2665,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/objdetect.hpp:
 
+/lib/x86_64-linux-gnu/libz.so.1:
+
 /usr/include/opencv4/opencv2/core/mat.hpp:
 
 /lib/x86_64-linux-gnu/libpgm-5.3.so.0:
@@ -2427,7 +2677,11 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/core/mat.inl.hpp:
 
+/usr/lib/x86_64-linux-gnu/libopencv_videoio.so.4.10.0:
+
 /usr/include/opencv4/opencv2/core/matx.hpp:
+
+/lib/i386-linux-gnu/libX11.so.6:
 
 /usr/include/c++/14/bits/exception_defines.h:
 
@@ -2455,11 +2709,17 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/core/saturate.hpp:
 
+/lib/i386-linux-gnu/libkrb5.so.3:
+
 /usr/include/opencv4/opencv2/core/traits.hpp:
 
 /usr/lib/x86_64-linux-gnu/libgcc_s.so.1:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_reg.so.4.10.0:
+
+/usr/lib/x86_64-linux-gnu/libopencv_mcc.so.4.10.0:
 
 /usr/include/opencv4/opencv2/core/types.hpp:
 
@@ -2468,6 +2728,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/opencv4/opencv2/core/utility.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+
+/lib/x86_64-linux-gnu/libGLX.so.0:
 
 /usr/include/opencv4/opencv2/core/cvdef.h:
 
@@ -2491,6 +2753,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_rapid.so.4.10.0:
+
 /usr/include/opencv4/opencv2/dnn/version.hpp:
 
 /usr/include/c++/14/tr1/special_function_util.h:
@@ -2498,6 +2762,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/opencv4/opencv2/features2d.hpp:
 
 /usr/include/opencv4/opencv2/flann.hpp:
+
+/usr/lib/x86_64-linux-gnu/libopencv_ccalib.so.4.10.0:
 
 /usr/include/opencv4/opencv2/flann/all_indices.h:
 
@@ -2613,7 +2879,11 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/opencv4/opencv2/videoio.hpp:
 
+/usr/lib/i386-linux-gnu/libz.so.1:
+
 /usr/include/pthread.h:
+
+/usr/lib/i386-linux-gnu/libX11.so.6:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h:
 
@@ -2627,11 +2897,15 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/spdlog/details/log_msg.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_dnn_objdetect.so.4.10.0:
+
 /usr/include/spdlog/details/mpmc_blocking_q.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h:
 
 /usr/include/spdlog/spdlog.h:
+
+/lib/x86_64-linux-gnu/libX11.so.6:
 
 /usr/include/spdlog/details/null_mutex.h:
 
@@ -2649,6 +2923,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h:
 
+/lib/i386-linux-gnu/libk5crypto.so.3:
+
 /usr/include/c++/14/pstl/glue_memory_defs.h:
 
 /usr/include/spdlog/sinks/dup_filter_sink.h:
@@ -2656,6 +2932,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
 
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.10.0:
 
 /usr/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp:
 
@@ -2666,6 +2944,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/stdc-predef.h:
 
 /usr/include/stdio.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_rgbd.so.4.10.0:
 
 /usr/include/unistd.h:
 
@@ -2694,6 +2974,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_intensity_transform.so.4.10.0:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
@@ -2735,6 +3017,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-macros.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_phase_unwrapping.so.4.10.0:
+
 /usr/include/opencv4/opencv2/core/ovx.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
@@ -2746,6 +3030,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_calib3d.so.4.10.0:
 
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
@@ -2762,6 +3048,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/spdlog/details/thread_pool.h:
 
 /usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_dnn.so.4.10.0:
 
 /usr/include/arpa/inet.h:
 
@@ -2823,6 +3111,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
 
+/lib/i386-linux-gnu/libGLX.so.0:
+
 /usr/include/c++/14/debug/debug.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
@@ -2851,6 +3141,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 
 /usr/include/x86_64-linux-gnu/bits/types/stack_t.h:
 
+/usr/lib/x86_64-linux-gnu/libopencv_objdetect.so.4.10.0:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
@@ -2868,6 +3160,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
+
+/usr/lib/x86_64-linux-gnu/libopencv_ximgproc.so.4.10.0:
 
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 

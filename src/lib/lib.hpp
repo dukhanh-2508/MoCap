@@ -20,7 +20,8 @@ typedef struct {
 
 typedef struct {
     GlobalConfig glcfg;
-    int orch_port;  
+    int orch_port; 
+    int timesSendPacket;
     string orch_ip;
 } OrchestratorConfig;
 

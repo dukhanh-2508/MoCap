@@ -139,81 +139,104 @@ CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/i
  /usr/include/c++/14/tr1/modified_bessel_func.tcc \
  /usr/include/c++/14/tr1/poly_hermite.tcc \
  /usr/include/c++/14/tr1/poly_laguerre.tcc \
- /usr/include/c++/14/tr1/riemann_zeta.tcc /usr/include/spdlog/spdlog.h \
- /usr/include/spdlog/common.h /usr/include/spdlog/details/null_mutex.h \
- /usr/include/c++/14/atomic /usr/include/c++/14/bits/atomic_base.h \
- /usr/include/c++/14/new /usr/include/c++/14/bits/exception.h \
- /usr/include/c++/14/bits/atomic_lockfree_defines.h \
- /usr/include/c++/14/utility /usr/include/c++/14/bits/stl_relops.h \
- /usr/include/c++/14/initializer_list /usr/include/spdlog/tweakme.h \
- /usr/include/c++/14/cstdio /usr/include/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/c++/14/exception /usr/include/c++/14/bits/exception_ptr.h \
+ /usr/include/c++/14/tr1/riemann_zeta.tcc /usr/include/c++/14/filesystem \
+ /usr/include/c++/14/bits/fs_fwd.h /usr/include/c++/14/system_error \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
+ /usr/include/c++/14/stdexcept /usr/include/c++/14/exception \
+ /usr/include/c++/14/bits/exception.h \
+ /usr/include/c++/14/bits/exception_ptr.h \
  /usr/include/c++/14/bits/cxxabi_init_exception.h \
- /usr/include/c++/14/typeinfo /usr/include/c++/14/bits/nested_exception.h \
- /usr/include/c++/14/functional /usr/include/c++/14/bits/std_function.h \
- /usr/include/c++/14/unordered_map \
- /usr/include/c++/14/bits/unordered_map.h \
- /usr/include/c++/14/bits/hashtable.h \
- /usr/include/c++/14/bits/hashtable_policy.h \
- /usr/include/c++/14/ext/aligned_buffer.h \
- /usr/include/c++/14/ext/alloc_traits.h \
- /usr/include/c++/14/bits/alloc_traits.h \
- /usr/include/c++/14/bits/stl_construct.h \
+ /usr/include/c++/14/typeinfo /usr/include/c++/14/new \
+ /usr/include/c++/14/bits/nested_exception.h /usr/include/c++/14/string \
+ /usr/include/c++/14/bits/char_traits.h \
  /usr/include/c++/14/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
  /usr/include/c++/14/bits/new_allocator.h \
- /usr/include/c++/14/bits/enable_special_members.h \
- /usr/include/c++/14/bits/node_handle.h \
- /usr/include/c++/14/bits/range_access.h \
- /usr/include/c++/14/bits/erase_if.h \
- /usr/include/c++/14/bits/memory_resource.h /usr/include/c++/14/cstddef \
- /usr/include/c++/14/bits/uses_allocator_args.h \
- /usr/include/c++/14/vector /usr/include/c++/14/bits/stl_uninitialized.h \
- /usr/include/c++/14/bits/stl_vector.h \
- /usr/include/c++/14/bits/stl_bvector.h \
- /usr/include/c++/14/bits/vector.tcc /usr/include/c++/14/array \
- /usr/include/c++/14/compare /usr/include/c++/14/memory \
- /usr/include/c++/14/bits/stl_tempbuf.h \
- /usr/include/c++/14/bits/stl_raw_storage_iter.h \
- /usr/include/c++/14/bits/align.h /usr/include/c++/14/bits/shared_ptr.h \
- /usr/include/c++/14/bits/shared_ptr_base.h \
- /usr/include/c++/14/bits/allocated_ptr.h \
- /usr/include/c++/14/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
- /usr/include/c++/14/ext/concurrence.h \
- /usr/include/c++/14/bits/shared_ptr_atomic.h \
- /usr/include/c++/14/backward/auto_ptr.h \
- /usr/include/c++/14/pstl/glue_memory_defs.h \
- /usr/include/c++/14/pstl/execution_defs.h /usr/include/c++/14/string \
- /usr/include/c++/14/bits/char_traits.h \
  /usr/include/c++/14/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
  /usr/include/c++/14/clocale /usr/include/locale.h \
  /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/14/cctype \
  /usr/include/ctype.h /usr/include/c++/14/bits/ostream_insert.h \
  /usr/include/c++/14/bits/cxxabi_forced.h \
- /usr/include/c++/14/bits/basic_string.h /usr/include/c++/14/string_view \
+ /usr/include/c++/14/bits/range_access.h \
+ /usr/include/c++/14/initializer_list \
+ /usr/include/c++/14/bits/basic_string.h \
+ /usr/include/c++/14/ext/alloc_traits.h \
+ /usr/include/c++/14/bits/alloc_traits.h \
+ /usr/include/c++/14/bits/stl_construct.h /usr/include/c++/14/string_view \
  /usr/include/c++/14/bits/string_view.tcc \
  /usr/include/c++/14/ext/string_conversions.h /usr/include/c++/14/cstdlib \
+ /usr/include/c++/14/cstdio /usr/include/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/c++/14/bits/charconv.h \
- /usr/include/c++/14/bits/basic_string.tcc /usr/include/spdlog/fmt/fmt.h \
- /usr/include/fmt/core.h /usr/include/c++/14/iterator \
- /usr/include/c++/14/bits/stream_iterator.h \
- /usr/include/c++/14/bits/streambuf_iterator.h \
- /usr/include/c++/14/streambuf /usr/include/c++/14/bits/ios_base.h \
+ /usr/include/c++/14/bits/basic_string.tcc \
+ /usr/include/c++/14/bits/memory_resource.h /usr/include/c++/14/cstddef \
+ /usr/include/c++/14/bits/uses_allocator_args.h \
+ /usr/include/c++/14/bits/fs_path.h /usr/include/c++/14/locale \
  /usr/include/c++/14/bits/locale_classes.h \
+ /usr/include/c++/14/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
+ /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
  /usr/include/c++/14/bits/locale_classes.tcc \
- /usr/include/c++/14/system_error \
- /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
- /usr/include/c++/14/stdexcept /usr/include/c++/14/bits/streambuf.tcc \
- /usr/include/fmt/format.h /usr/include/fmt/core.h \
- /usr/include/spdlog/details/registry.h \
+ /usr/include/c++/14/bits/locale_facets.h /usr/include/c++/14/cwctype \
+ /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
+ /usr/include/c++/14/bits/ios_base.h /usr/include/c++/14/streambuf \
+ /usr/include/c++/14/bits/streambuf.tcc \
+ /usr/include/c++/14/bits/streambuf_iterator.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
+ /usr/include/c++/14/bits/locale_facets.tcc \
+ /usr/include/c++/14/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/14/bits/codecvt.h \
+ /usr/include/c++/14/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/14/bits/locale_conv.h /usr/include/c++/14/iomanip \
+ /usr/include/c++/14/bits/quoted_string.h /usr/include/c++/14/sstream \
+ /usr/include/c++/14/istream /usr/include/c++/14/ios \
+ /usr/include/c++/14/bits/basic_ios.h \
+ /usr/include/c++/14/bits/basic_ios.tcc /usr/include/c++/14/ostream \
+ /usr/include/c++/14/bits/ostream.tcc \
+ /usr/include/c++/14/bits/istream.tcc \
+ /usr/include/c++/14/bits/sstream.tcc /usr/include/c++/14/codecvt \
+ /usr/include/c++/14/ext/concurrence.h \
+ /usr/include/c++/14/bits/shared_ptr.h \
+ /usr/include/c++/14/bits/shared_ptr_base.h \
+ /usr/include/c++/14/bits/allocated_ptr.h \
+ /usr/include/c++/14/ext/aligned_buffer.h \
+ /usr/include/c++/14/bits/fs_dir.h /usr/include/c++/14/bits/fs_ops.h \
+ /usr/include/c++/14/vector /usr/include/c++/14/bits/stl_uninitialized.h \
+ /usr/include/c++/14/bits/stl_vector.h \
+ /usr/include/c++/14/bits/stl_bvector.h \
+ /usr/include/c++/14/bits/vector.tcc /usr/include/spdlog/spdlog.h \
+ /usr/include/spdlog/common.h /usr/include/spdlog/details/null_mutex.h \
+ /usr/include/c++/14/atomic /usr/include/c++/14/bits/atomic_base.h \
+ /usr/include/c++/14/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/14/utility /usr/include/c++/14/bits/stl_relops.h \
+ /usr/include/spdlog/tweakme.h /usr/include/c++/14/functional \
+ /usr/include/c++/14/bits/std_function.h \
+ /usr/include/c++/14/unordered_map \
+ /usr/include/c++/14/bits/unordered_map.h \
+ /usr/include/c++/14/bits/hashtable.h \
+ /usr/include/c++/14/bits/hashtable_policy.h \
+ /usr/include/c++/14/bits/enable_special_members.h \
+ /usr/include/c++/14/bits/node_handle.h \
+ /usr/include/c++/14/bits/erase_if.h /usr/include/c++/14/array \
+ /usr/include/c++/14/compare /usr/include/c++/14/memory \
+ /usr/include/c++/14/bits/stl_tempbuf.h \
+ /usr/include/c++/14/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/14/bits/align.h \
+ /usr/include/c++/14/bits/shared_ptr_atomic.h \
+ /usr/include/c++/14/backward/auto_ptr.h \
+ /usr/include/c++/14/pstl/glue_memory_defs.h \
+ /usr/include/c++/14/pstl/execution_defs.h /usr/include/spdlog/fmt/fmt.h \
+ /usr/include/fmt/core.h /usr/include/c++/14/iterator \
+ /usr/include/c++/14/bits/stream_iterator.h /usr/include/fmt/format.h \
+ /usr/include/fmt/core.h /usr/include/spdlog/details/registry.h \
  /usr/include/spdlog/details/periodic_worker.h \
  /usr/include/c++/14/condition_variable \
  /usr/include/c++/14/bits/std_mutex.h \
@@ -223,6 +246,152 @@ CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/i
  /usr/include/spdlog/details/circular_q.h /usr/include/c++/14/cassert \
  /usr/include/assert.h /usr/include/spdlog/details/log_msg_buffer.h \
  /usr/include/spdlog/details/log_msg.h /usr/include/spdlog/version.h \
+ /usr/include/opencv4/opencv2/opencv.hpp \
+ /usr/include/opencv4/opencv2/opencv_modules.hpp \
+ /usr/include/opencv4/opencv2/core.hpp \
+ /usr/include/opencv4/opencv2/core/cvdef.h \
+ /usr/include/opencv4/opencv2/core/version.hpp \
+ /usr/include/opencv4/opencv2/core/hal/interface.h \
+ /usr/include/opencv4/opencv2/core/cv_cpu_dispatch.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/emmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/xmmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mm_malloc.h \
+ /usr/include/c++/14/stdlib.h /usr/include/opencv4/opencv2/core/base.hpp \
+ /usr/include/c++/14/climits \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h \
+ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+ /usr/include/linux/limits.h \
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
+ /usr/include/c++/14/algorithm /usr/include/c++/14/bits/stl_algo.h \
+ /usr/include/c++/14/bits/algorithmfwd.h \
+ /usr/include/c++/14/bits/stl_heap.h \
+ /usr/include/c++/14/bits/uniform_int_dist.h \
+ /usr/include/c++/14/pstl/glue_algorithm_defs.h \
+ /usr/include/opencv4/opencv2/core/cvstd.hpp \
+ /usr/include/opencv4/opencv2/core/cvstd_wrapper.hpp \
+ /usr/include/opencv4/opencv2/core/neon_utils.hpp \
+ /usr/include/opencv4/opencv2/core/vsx_utils.hpp \
+ /usr/include/opencv4/opencv2/core/check.hpp \
+ /usr/include/opencv4/opencv2/core/traits.hpp \
+ /usr/include/opencv4/opencv2/core/matx.hpp \
+ /usr/include/opencv4/opencv2/core/saturate.hpp \
+ /usr/include/opencv4/opencv2/core/fast_math.hpp \
+ /usr/include/opencv4/opencv2/core/matx.inl.hpp \
+ /usr/include/opencv4/opencv2/core/types.hpp /usr/include/c++/14/cfloat \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/float.h \
+ /usr/include/opencv4/opencv2/core/mat.hpp \
+ /usr/include/opencv4/opencv2/core/bufferpool.hpp \
+ /usr/include/opencv4/opencv2/core/mat.inl.hpp \
+ /usr/include/opencv4/opencv2/core/persistence.hpp \
+ /usr/include/opencv4/opencv2/core/operations.hpp \
+ /usr/include/opencv4/opencv2/core/cvstd.inl.hpp \
+ /usr/include/c++/14/complex \
+ /usr/include/opencv4/opencv2/core/utility.hpp \
+ /usr/include/opencv4/opencv2/core/optim.hpp \
+ /usr/include/opencv4/opencv2/core/ovx.hpp \
+ /usr/include/opencv4/opencv2/core/cvdef.h \
+ /usr/include/opencv4/opencv2/calib3d.hpp \
+ /usr/include/opencv4/opencv2/features2d.hpp \
+ /usr/include/opencv4/opencv2/flann/miniflann.hpp \
+ /usr/include/opencv4/opencv2/flann/defines.h \
+ /usr/include/opencv4/opencv2/flann/config.h \
+ /usr/include/opencv4/opencv2/core/affine.hpp \
+ /usr/include/opencv4/opencv2/core/utils/logger.hpp \
+ /usr/include/c++/14/iostream \
+ /usr/include/opencv4/opencv2/core/utils/logger.defines.hpp \
+ /usr/include/opencv4/opencv2/core/utils/logtag.hpp \
+ /usr/include/opencv4/opencv2/dnn.hpp \
+ /usr/include/opencv4/opencv2/dnn/dnn.hpp \
+ /usr/include/opencv4/opencv2/core/async.hpp \
+ /usr/include/opencv4/opencv2/dnn/version.hpp \
+ /usr/include/opencv4/opencv2/dnn/dict.hpp /usr/include/c++/14/map \
+ /usr/include/c++/14/bits/stl_tree.h /usr/include/c++/14/bits/stl_map.h \
+ /usr/include/c++/14/bits/stl_multimap.h \
+ /usr/include/opencv4/opencv2/dnn/layer.hpp \
+ /usr/include/opencv4/opencv2/dnn/dnn.inl.hpp \
+ /usr/include/opencv4/opencv2/dnn/utils/inference_engine.hpp \
+ /usr/include/opencv4/opencv2/dnn/dnn.hpp \
+ /usr/include/opencv4/opencv2/flann.hpp \
+ /usr/include/opencv4/opencv2/flann/flann_base.hpp \
+ /usr/include/opencv4/opencv2/flann/general.h \
+ /usr/include/opencv4/opencv2/flann/matrix.h \
+ /usr/include/opencv4/opencv2/flann/params.h \
+ /usr/include/opencv4/opencv2/flann/any.h \
+ /usr/include/opencv4/opencv2/flann/defines.h \
+ /usr/include/opencv4/opencv2/flann/saving.h \
+ /usr/include/opencv4/opencv2/flann/nn_index.h \
+ /usr/include/opencv4/opencv2/flann/result_set.h /usr/include/c++/14/set \
+ /usr/include/c++/14/bits/stl_set.h \
+ /usr/include/c++/14/bits/stl_multiset.h \
+ /usr/include/opencv4/opencv2/flann/all_indices.h \
+ /usr/include/opencv4/opencv2/flann/kdtree_index.h \
+ /usr/include/opencv4/opencv2/flann/dynamic_bitset.h \
+ /usr/include/opencv4/opencv2/flann/dist.h \
+ /usr/include/opencv4/opencv2/flann/heap.h \
+ /usr/include/opencv4/opencv2/flann/allocator.h \
+ /usr/include/opencv4/opencv2/flann/random.h \
+ /usr/include/opencv4/opencv2/flann/kdtree_single_index.h \
+ /usr/include/opencv4/opencv2/flann/kmeans_index.h \
+ /usr/include/opencv4/opencv2/flann/logger.h \
+ /usr/include/opencv4/opencv2/flann/composite_index.h \
+ /usr/include/opencv4/opencv2/flann/linear_index.h \
+ /usr/include/opencv4/opencv2/flann/hierarchical_clustering_index.h \
+ /usr/include/opencv4/opencv2/flann/lsh_index.h \
+ /usr/include/opencv4/opencv2/flann/lsh_table.h \
+ /usr/include/c++/14/math.h \
+ /usr/include/opencv4/opencv2/flann/autotuned_index.h \
+ /usr/include/opencv4/opencv2/flann/ground_truth.h \
+ /usr/include/opencv4/opencv2/flann/index_testing.h \
+ /usr/include/opencv4/opencv2/flann/timer.h \
+ /usr/include/opencv4/opencv2/flann/sampling.h \
+ /usr/include/opencv4/opencv2/highgui.hpp \
+ /usr/include/opencv4/opencv2/imgcodecs.hpp \
+ /usr/include/opencv4/opencv2/videoio.hpp \
+ /usr/include/opencv4/opencv2/imgproc.hpp \
+ /usr/include/opencv4/opencv2/imgproc/segmentation.hpp \
+ /usr/include/opencv4/opencv2/ml.hpp \
+ /usr/include/opencv4/opencv2/ml/ml.inl.hpp \
+ /usr/include/opencv4/opencv2/objdetect.hpp \
+ /usr/include/opencv4/opencv2/objdetect/aruco_detector.hpp \
+ /usr/include/opencv4/opencv2/objdetect/aruco_dictionary.hpp \
+ /usr/include/opencv4/opencv2/objdetect/aruco_board.hpp \
+ /usr/include/opencv4/opencv2/objdetect/graphical_code_detector.hpp \
+ /usr/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp \
+ /usr/include/opencv4/opencv2/objdetect/face.hpp \
+ /usr/include/opencv4/opencv2/objdetect/charuco_detector.hpp \
+ /usr/include/opencv4/opencv2/objdetect/barcode.hpp \
+ /usr/include/opencv4/opencv2/photo.hpp \
+ /usr/include/opencv4/opencv2/stitching.hpp \
+ /usr/include/opencv4/opencv2/stitching/warpers.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/warpers.hpp \
+ /usr/include/opencv4/opencv2/core/cuda.hpp \
+ /usr/include/opencv4/opencv2/core/cuda_types.hpp \
+ /usr/include/opencv4/opencv2/core/cuda.inl.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/warpers_inl.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/warpers.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/matchers.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/matchers.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/util.hpp \
+ /usr/include/c++/14/list /usr/include/c++/14/bits/stl_list.h \
+ /usr/include/c++/14/bits/list.tcc \
+ /usr/include/opencv4/opencv2/stitching/detail/util_inl.hpp \
+ /usr/include/c++/14/queue /usr/include/c++/14/deque \
+ /usr/include/c++/14/bits/stl_deque.h /usr/include/c++/14/bits/deque.tcc \
+ /usr/include/c++/14/bits/stl_queue.h \
+ /usr/include/opencv4/opencv2/stitching/detail/camera.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/exposure_compensate.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/seam_finders.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/blenders.hpp \
+ /usr/include/opencv4/opencv2/stitching/detail/camera.hpp \
+ /usr/include/opencv4/opencv2/video.hpp \
+ /usr/include/opencv4/opencv2/video/tracking.hpp \
+ /usr/include/opencv4/opencv2/video/background_segm.hpp \
  /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../imgProcessing.hpp \
  /usr/include/arpa/inet.h /usr/include/netinet/in.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
@@ -237,25 +406,13 @@ CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/i
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
  /usr/include/x86_64-linux-gnu/bits/in.h \
  /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../../lib/frameQueue.hpp \
- /usr/include/c++/14/queue /usr/include/c++/14/deque \
- /usr/include/c++/14/bits/stl_deque.h /usr/include/c++/14/bits/deque.tcc \
- /usr/include/c++/14/bits/stl_heap.h /usr/include/c++/14/bits/stl_queue.h \
  /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../receiver.hpp \
- /usr/include/c++/14/iostream /usr/include/c++/14/ostream \
- /usr/include/c++/14/ios /usr/include/c++/14/bits/basic_ios.h \
- /usr/include/c++/14/bits/locale_facets.h /usr/include/c++/14/cwctype \
- /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
- /usr/include/c++/14/bits/locale_facets.tcc \
- /usr/include/c++/14/bits/basic_ios.tcc \
- /usr/include/c++/14/bits/ostream.tcc /usr/include/c++/14/istream \
- /usr/include/c++/14/bits/istream.tcc /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../../lib/lib.hpp
+ /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../../lib/lib.hpp \
+ /home/khanh/Programming/Thesis/Thesis_1/src/slave/src/../locateMarker.hpp

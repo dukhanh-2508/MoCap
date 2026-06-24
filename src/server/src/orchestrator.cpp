@@ -10,6 +10,8 @@ using namespace std;
 
 OrchestratorFunctor::OrchestratorFunctor(OrchestratorConfig& cfg) {
     this->isRunning = &(cfg.glcfg.is_running);
+    this->timesSendPacket = &(cfg.timesSendPacket);
+    this->currentTimesSendPacket = 0;
     this->orchIP = cfg.orch_ip;
     this->orchPort = cfg.orch_port;
     this->sock = -1;
@@ -65,7 +67,7 @@ bool OrchestratorFunctor::operator()() {
 
     uint32_t current_frame = 0;
     const uint64_t FUTURE_OFFSET_US = 15000; 
-    const float FPS = 1.0/7;
+    const float FPS = 30;
     float loopDelay = 1000 / FPS;
     const chrono::milliseconds loop_delay((int) loopDelay);
 
@@ -74,29 +76,36 @@ bool OrchestratorFunctor::operator()() {
             close(sock);
             createSocket();
             this->needsUpdate = false;
+            this->currentTimesSendPacket = 0;
         }
 
-        auto now = chrono::system_clock::now();
-        uint64_t now_us = chrono::duration_cast<chrono::microseconds>(
-                            now.time_since_epoch()).count();
+        if((this->timesSendPacket != NULL && *(this->timesSendPacket) != SEND_INFINITE_TIMES && this->currentTimesSendPacket <= *(this->timesSendPacket)) ||
+            (this->timesSendPacket != NULL && *(this->timesSendPacket) == SEND_INFINITE_TIMES)) {
+            auto now = chrono::system_clock::now();
+            uint64_t now_us = chrono::duration_cast<chrono::microseconds>(
+                                now.time_since_epoch()).count();
 
-        uint64_t target_time = now_us + FUTURE_OFFSET_US;
+            uint64_t target_time = now_us + FUTURE_OFFSET_US;
 
-        FutureTriggerPacket packet;
-        strncpy(packet.header, "TRIG", 4);
-        packet.frame_id = current_frame++;
-        packet.target_time_us = target_time;
+            FutureTriggerPacket packet;
+            strncpy(packet.header, "TRIG", 4);
+            packet.frame_id = current_frame++;
+            packet.target_time_us = target_time;
+            spdlog::info("[ORCHESTRATOR] Sending packet...");
 
-        if (sendto(sock, &packet, sizeof(packet), 0, 
-                  (struct sockaddr*)&(this->boardcast_addr), sizeof(this->boardcast_addr)) < 0) {
-            // cerr << "[ORCHESTRATOR] Warning: Unable to send command!" << endl;
-            // cerr << "[ORCHESTRATOR] Errno: " << errno << " - " << strerror(errno) << endl;
-            spdlog::error(
-                "[ORCHESTRATOR] Warning: Unable to send command!\nErrno: {} - {}", errno, strerror(errno)
-            );
-        } else {
-            spdlog::info("[ORCHESTRATOR] Set time to {}", target_time);
+            if (sendto(sock, &packet, sizeof(packet), 0, 
+                    (struct sockaddr*)&(this->boardcast_addr), sizeof(this->boardcast_addr)) < 0) {
+                // cerr << "[ORCHESTRATOR] Warning: Unable to send command!" << endl;
+                // cerr << "[ORCHESTRATOR] Errno: " << errno << " - " << strerror(errno) << endl;
+                spdlog::error(
+                    "[ORCHESTRATOR] Warning: Unable to send command!\nErrno: {} - {}", errno, strerror(errno)
+                );
+            }
+            if (*(this->timesSendPacket) != SEND_INFINITE_TIMES) {
+                this->currentTimesSendPacket++;
+            }
         }
+
 
         this_thread::sleep_for(loop_delay);
     }
