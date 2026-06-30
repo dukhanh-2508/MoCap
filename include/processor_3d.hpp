@@ -1,113 +1,84 @@
 #pragma once
-#include <opencv2/opencv.hpp>
-#include <map>
+
+#include <iostream>
 #include <vector>
+#include <map>
+#include <cmath>
+#include <cstdint>
+#include <opencv2/opencv.hpp>
 
-/** 1. Quản lý hình học hệ thống (Stereo Projection)Hàm set_projection_matrices làm nhiệm vụ kết hợp thông số quang học
-của ống kính (Ma trận nội $K$) với vị trí lắp đặt phần cứng của 2 chiếc Raspberry Pi trong phòng Lab (Ma trận xoay $R$,
-vector tịnh tiến $T$).
-2. Giao hội tia sáng tính tọa độ thực (Triangulation via DLT)
-Một camera đơn chỉ biết Marker nằm trên một tia sáng nào đó chứ không biết nó cách camera bao xa. Khi có 2 camera cùng
-chụp, hàm triangulate_dlt sẽ dựng lại 2 tia sáng này từ góc nhìn của Cam 1 và Cam 2. Giao điểm của 2 đường thẳng đó
-trong không gian chính là vị trí thực tế của nắp chai hay Marker
-3. Đối chiếu dữ liệu đa kênh (Data Matching)
-Hàm reconstruct_scene nhận vào hai luồng dữ liệu riêng biệt từ 2 con Raspberry Pi qua giao thức UDP. Nó tự động kiểm tra
-, so khớp các cặp Marker có cùng ID với nhau để thực hiện phép tính, đảm bảo tính đúng đắn dữ liệu trước khi bắn sang
-ZeroMQ cho tầng hiển thị PyQt6 vẽ đồ thị.*/
-
-// Struct một Marker sau khi đã được dựng thành tọa độ 3D thực tế
-struct Point3D {
-    int id;
-    cv::Point3d coord;    // Tọa độ không gian 3 chiều thực tế (X, Y, Z)
+using namespace std;
+// sử dụng thuật toán DLT mở rộng cho nhiều Camera (Generalized Multi-view DLT) để gom toàn bộ ma trận chiếu
+//Pi và tọa độ 2D (ui, vi) của N camera vào một hệ phương trình tuyến tính tổng quát duy nhất A.X = 0, sau đó
+//giải SVD một lần để tìm ra tọa độ 3D tối ưu nhất.
+//Thuật toán này tự động quét xem có bao nhiêu camera nhìn thấy cùng một ID Marker (tối thiểu là 2) để lập ma trận hệ số A có kích thước (2N x 4)
+// Struct lưu trữ thông tin điểm ảnh từ các máy trạm Slave gửi về
+struct CameraObservation {
+    int camera_id;
+    cv::Point2f pt_2d;
 };
 
-class Processor3D {
+class MultiViewProcessor3D {
 private:
-    cv::Mat P1; // Ma trận chiếu  của Camera 1 (3X4)
-    cv::Mat P2; // Ma trận chiếu  của Camera 2 (3X4)
+    // Lưu trữ ma trận chiếu P của TẤT CẢ camera trong hệ thống (Key: camera_id)
+    std::map<int, cv::Mat> camera_projections;
 
 public:
-    Processor3D() {}
+    MultiViewProcessor3D() = default;
 
-    /**
-     *  Khởi tạo và tính toán Ma trận chiếu P1, P2 từ thông số hình học hệ thống Stereo
-     * Ma trận nội thông số Camera 1 (3x3)
-     *  R1 Ma trận xoay Camera 1 (3x3) - Thường là ma trận đơn vị nếu chọn Cam 1 làm gốc
-     * T1 Vector tịnh tiến Camera 1 (3x1) - Thường là vector [0, 0, 0] nếu chọn Cam 1 làm gốc
-     *  K2 Ma trận nội thông số Camera 2 (3x3)
-     *  R2 Ma trận xoay của Camera 2 so với Camera 1 (3x3)
-     *  T2 Vector tịnh tiến của Camera 2 so với Camera 1 (3x1)
-     */
-    void set_projection_matrices(const cv::Mat& K1, const cv::Mat& R1, const cv::Mat& T1,
-                                 const cv::Mat& K2, const cv::Mat& R2, const cv::Mat& T2) {
-        // Đảm bảo dữ liệu ma trận đầu vào ở định dạng số thực Double (CV_64F)
-        cv::Mat K1_64, R1_64, T1_64, K2_64, R2_64, T2_64;
-        K1.convertTo(K1_64, CV_64F); R1.convertTo(R1_64, CV_64F); T1.convertTo(T1_64, CV_64F);
-        K2.convertTo(K2_64, CV_64F); R2.convertTo(R2_64, CV_64F); T2.convertTo(T2_64, CV_64F);
-
-        // Tạo ma trận [R1 | T1] kích thước 3x4 cho Camera 1
-        cv::Mat Rt1 = cv::Mat::eye(3, 4, CV_64F);
-        R1_64.copyTo(Rt1(cv::Rect(0, 0, 3, 3)));
-        T1_64.copyTo(Rt1(cv::Rect(3, 0, 1, 3)));
-        P1 = K1_64 * Rt1; // P1 = K1 * [R1 | T1]
-
-        // Tạo ma trận [R2 | T2] kích thước 3x4 cho Camera 2
-        cv::Mat Rt2(3, 4, CV_64F);
-        R2_64.copyTo(Rt2(cv::Rect(0, 0, 3, 3)));
-        T2_64.copyTo(Rt2(cv::Rect(3, 0, 1, 3)));
-        P2 = K2_64 * Rt2; // P2 = K2 * [R2 | T2]
+    // Hàm đăng ký ma trận chiếu P = K * [R|T] cho từng Camera khi cấu hình hệ thống
+    void register_camera(int cam_id, const cv::Mat& K, const cv::Mat& R, const cv::Mat& T) {
+        cv::Mat Rt;
+        cv::hconcat(R, T, Rt);
+        camera_projections[cam_id] = K * Rt;
     }
 
-    /**
-     * Giải thuật toán DLT sử dụng phân rã SVD để tính tọa độ 3D từ 1 cặp điểm ảnh 2D
-     * pt1 Tọa độ (u1, v1) của Marker trên ảnh Camera 1
-     *  pt2 Tọa độ (u2, v2) của Marker trên ảnh Camera 2
-     */
-    cv::Point3d triangulate_dlt(cv::Point2f pt1, cv::Point2f pt2) {
-        // Thiết lập ma trận hệ số A kích thước 4x4 từ phương trình hình học lỗ kim
-        cv::Mat A(4, 4, CV_64F);
+    // THUẬT TOÁN LÕI: N-View Triangulation qua phương pháp Bình phương tối tiểu SVD
+    cv::Point3d triangulate_multi_view(const std::vector<CameraObservation>& observations) {
+        // Cần tối thiểu dữ liệu từ 2 góc camera để giao hội tia sáng trong không gian
+        if (observations.size() < 2) return cv::Point3d(0, 0, 0);
 
-        // Hàng 0 và 1: Ràng buộc hình học từ góc nhìn Camera 1
-        A.row(0) = pt1.x * P1.row(2) - P1.row(0);
-        A.row(1) = pt1.y * P1.row(2) - P1.row(1);
+        int N = observations.size();
+        // Mỗi camera đóng góp 2 hàng ràng buộc đường cực, ma trận A có kích thước (2N x 4)
+        cv::Mat A = cv::Mat::zeros(2 * N, 4, CV_64F);
 
-        // Hàng 2 và 3: Ràng buộc hình học từ góc nhìn Camera 2
-        A.row(2) = pt2.x * P2.row(2) - P2.row(0);
-        A.row(3) = pt2.y * P2.row(2) - P2.row(1);
+        for (int i = 0; i < N; ++i) {
+            int cam_id = observations[i].camera_id;
+            double u = observations[i].pt_2d.x;
+            double v = observations[i].pt_2d.y;
 
-        // Thực hiện giải hệ phương trình tuyến tính thuần nhất A * X = 0 bằng phân rã SVD
-        cv::Mat w, u, vt;
-        cv::SVD::compute(A, w, u, vt);
+            // Lấy ma trận chiếu P tương ứng của Camera đó
+            cv::Mat P = camera_projections[cam_id];
 
-        // Nghiệm tối ưu nằm ở hàng cuối cùng của ma trận Vt (dạng tọa độ đồng nhất [X, Y, Z, W])
-        double W = vt.at<double>(3, 3);
-        double X = vt.at<double>(3, 0) / W;
-        double Y = vt.at<double>(3, 1) / W;
-        double Z = vt.at<double>(3, 2) / W;
+            // Thiết lập hệ phương trình ràng buộc hình học tia sáng
+            A.row(2 * i)     = u * P.row(2) - P.row(0);
+            A.row(2 * i + 1) = v * P.row(2) - P.row(1);
+        }
 
-        return cv::Point3d(X, Y, Z);
+        // Tiến hành phân rã giá trị đơn lẻ SVD giải hệ thuần nhất
+        cv::SVD svd(A, cv::SVD::MODIFY_A);
+        cv::Mat X = svd.vt.row(3); // Nghiệm là hàng cuối cùng của ma trận Vt
+
+        double w = X.at<double>(0, 3);
+        if (std::abs(w) < 1e-5) w = 1e-5;
+
+        // Trả về tọa độ Euclid thực tế (đơn vị: mm)
+        return cv::Point3d(X.at<double>(0, 0) / w,
+                           X.at<double>(0, 1) / w,
+                           X.at<double>(0, 2) / w);
     }
 
-    /**
-     * Hàm xử lý hàng loạt: Đối chiếu ID và tái tạo toàn bộ không gian 3D của các Marker
-     * cam1_data Map chứa dữ liệu của Cam 1: Key là ID, Value là tọa độ 2D (u, v)
-     * cam2_data Map chứa dữ liệu của Cam 2: Key là ID, Value là tọa độ 2D (u, v)
-     */
-    std::vector<Point3D> reconstruct_scene(const std::map<int, cv::Point2f>& cam1_data,
-                                           const std::map<int, cv::Point2f>& cam2_data) {
-        std::vector<Point3D> markers_3d;
-
-        // Vòng lặp quét qua toàn bộ Marker của Cam 1
-        for (const auto& item : cam1_data) {
+    // Hàm quét đồng bộ dữ liệu theo ID Marker từ gói mạng đồng bộ n-camera đẩy xuống
+    void process_mocap_frame(const std::map<int, std::vector<CameraObservation>>& frame_data,
+                             std::map<int, cv::Point3d>& output_3d) {
+        // frame_data sắp xếp theo cấu trúc: Key = Marker_ID -> Danh sách các Cam nhìn thấy nó
+        for (const auto& item : frame_data) {
             int marker_id = item.first;
+            const std::vector<CameraObservation>& obs = item.second;
 
-            // Nếu Cam 2 cũng tìm thấy một Marker có trùng ID (Nhờ bộ logic đồng bộ)
-            if (cam2_data.count(marker_id)) {
-                // Tiến hành giao hội tia sáng để dựng tọa độ 3D thực tế
-                cv::Point3d coord_3d = triangulate_dlt(item.second, cam2_data.at(marker_id));
-                markers_3d.push_back({marker_id, coord_3d});
+            if (obs.size() >= 2) { // Chỉ giải nếu có từ 2 camera trở lên bắt trúng tâm
+                output_3d[marker_id] = triangulate_multi_view(obs);
             }
         }
-        return markers_3d;
     }
 };
