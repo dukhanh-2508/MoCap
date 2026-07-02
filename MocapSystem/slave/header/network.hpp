@@ -49,7 +49,16 @@ class NetworkModule : public IModule<I, CaptureTrigger> {
 
         void setState(int newState) override;
         void runModule() override;
+        void setConfig(int new_id) { this->slave_id = new_id; };
+        void setInitialConfig(string ip, int port, int id);
 };
+
+template <typename I>
+void NetworkModule<I>::setInitialConfig(string ip, int port, int id) {
+    this->server_ip = ip;
+    this->tcp_port = port;
+    this->slave_id = id;
+}
 
 template <typename I>
 NetworkModule<I>::NetworkModule() : IModule<I, CaptureTrigger>(20) {
@@ -182,33 +191,19 @@ void NetworkModule<I>::tcpRxLoop() {
             this->outputData->push(trigger);
         }
         else if (header.type == PKT_CMD_SET_PARAM) {
-            char* param_buf = new char[header.payload_size + 1];
-            read(tcp_client_fd, param_buf, header.payload_size);
-            param_buf[header.payload_size] = '\0';
+            string payload_str((char*)payload_buffer, header.payload_size);
+            size_t colon_pos = payload_str.find(':');
             
-            string param_str(param_buf);
-            delete[] param_buf;
-
-            // Example Parsing "TOGGLE:1.0" or "ID:2"
-            size_t delim = param_str.find(':');
-            if (delim != string::npos) {
-                string key = param_str.substr(0, delim);
-                float val = stof(param_str.substr(delim + 1));
-
+            if (colon_pos != string::npos) {
                 SystemNotification noti;
                 noti.origin = NETWORK;
-                NetworkNotiPayloadSlave payload;
-
-                if (key == "TOGGLE") {
-                    payload.cmdOrigin = NET_SERVER_CMD_TRACKING;
-                    payload.toggle = (val > 0.0f) ? "on" : "off";
-                } else if (key == "ID") {
-                    payload.cmdOrigin = NET_SERVER_CMD_CONFIG;
-                    payload.slave_id = (int)val;
-                    this->slave_id = (int)val; // Update internally
-                }
                 
-                noti.payload = payload;
+                NetworkNotiPayloadSlave p;
+                p.cmdOrigin = NET_SERVER_CMD_CONFIG;
+                p.paramName = payload_str.substr(0, colon_pos);
+                p.paramValue = stof(payload_str.substr(colon_pos + 1));
+                
+                noti.payload = p;
                 this->outNoti->push(noti);
             }
         }

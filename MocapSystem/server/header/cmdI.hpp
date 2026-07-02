@@ -84,15 +84,27 @@ void CLIModule<I>::runModule() {
     set_cmd->add_option("--ip", ip, "Set IP");
 
     // Commands to manage slaves
+    int target_id = -999;
+    int newSlaveID_val = -999;
+    float thresh_value = -999.0f, max_dis = -999.0f, track_dist = -999.0f;
+    float brightness = -999.0f, gain = -999.0f, exposure = -999.0f;
     CLI::App* slave_cmd = app.add_subcommand("slave", "Slave utility commands");
     string slave_ip = "";
     slave_cmd->add_option("--slaveIP", slave_ip);
     bool getID = false;
     slave_cmd->add_flag("--getID", getID);
-    int newSlaveID = 0;
-    slave_cmd->add_option("--updateID", newSlaveID);
+    
+    slave_cmd->add_option("--targetID", target_id, "Target by ID");
+    slave_cmd->add_option("--updateID", newSlaveID_val, "Set new ID");
     string toggle = "";
     slave_cmd->add_option("--toggle", toggle, "Turn this slave on / off");
+    
+    slave_cmd->add_option("--thresh", thresh_value, "Set thresh value");
+    slave_cmd->add_option("--maxDis", max_dis, "Set max disappeared frames");
+    slave_cmd->add_option("--trackDist", track_dist, "Set tracking distance");
+    slave_cmd->add_option("--brightness", brightness, "Set camera brightness");
+    slave_cmd->add_option("--gain", gain, "Set camera gain");
+    slave_cmd->add_option("--exposure", exposure, "Set camera exposure time");
     
     // Commands for other tasks
     CLI::App* controlled_capture_cmd = app.add_subcommand("ctlcap", "Command slaves to take picture in a controlled manner");
@@ -127,6 +139,10 @@ void CLIModule<I>::runModule() {
         confTX = false; confRX = false; port = 0; ip = "";
         slave_ip = ""; getID = false; newSlaveID = 0; toggle = "";
         takePicAmount = 0; autoShot = false; manualShot = false; cameraID = 0; saveFolder = "."; startIdx = 0;
+        target_id = -999;
+        newSlaveID_val = -999;
+        thresh_value = -999.0f; max_dis = -999.0f; track_dist = -999.0f;
+        brightness = -999.0f; gain = -999.0f; exposure = -999.0f;
 
         bool dontSendMore = false; // Avoid sending another payload after this if-else block if a payload has been sent in this if-else block
 
@@ -213,11 +229,16 @@ void CLIModule<I>::runModule() {
             // Slave Control
             else if (slave_cmd->parsed()) {
                 manageSlave_Info slave_info;
-                if (slave_cmd->count("--slaveIP") > 0) slave_info.slave_ip = slave_ip;
-                slave_info.getID = getID;
-                if (slave_cmd->count("--updateID") > 0) slave_info.newSlaveID = newSlaveID;
-                if (slave_cmd->count("--toggle") > 0) slave_info.toggle = toggle;
-                
+                slave_info.slave_ip = (slave_cmd->count("--slaveIP") > 0) ? slave_ip : "";
+                slave_info.target_id = (slave_cmd->count("--targetID") > 0) ? target_id : -999;
+                slave_info.newSlaveID = (slave_cmd->count("--updateID") > 0) ? newSlaveID : -999;
+                slave_info.thresh_value = (slave_cmd->count("--thresh") > 0) ? thresh_value : -999;
+                slave_info.max_disappeared = (slave_cmd->count("--maxDis") > 0) ? max_dis : -999;
+                slave_info.tracking_dist = (slave_cmd->count("--trackDist") > 0) ? track_dist : -999;
+                slave_info.brightness = (slave_cmd->count("--brightness") > 0) ? brightness : -999;
+                slave_info.gain = (slave_cmd->count("--gain") > 0) ? gain : -999;
+                slave_info.exposure = (slave_cmd->count("--exposure") > 0) ? exposure : -999;
+
                 payload.cmdOrigin = CLI_MANAGE_SLAVE_SET;
                 payload.info = slave_info;
             }

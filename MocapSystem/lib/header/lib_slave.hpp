@@ -65,8 +65,8 @@ enum NET_SERVER_CMD {
 
 typedef struct {
     NET_SERVER_CMD cmdOrigin;
-    string toggle;
-    int slave_id;
+    string paramName;
+    float paramValue;
 } NetworkNotiPayloadSlave;
 
 // ============= Slave Img Processing Block ================ //

@@ -158,32 +158,30 @@ int main() {
 
                     case CLI_MANAGE_SLAVE_SET: {
                         manageSlave_Info info = get<manageSlave_Info>(payload.info);
-                        
-                        if (info.getID) {
-                            NetworkInput netIn;
-                            netIn.cmd = NET_CMD_QUERY_INFO;
-                            
-                            NetCmdQueryInfo qInfo;
-                            qInfo.slave_id = info.newSlaveID; // Use ID to query
-                            netIn.payload = qInfo;
-                            
-                            mainToNetQueue->push(netIn);
-                            printf("[ROUTER] Dispatched Info Query for Slave %d.\n", qInfo.slave_id);
-                        }
-                        
-                        if (info.toggle != "") {
+    
+                        auto dispatchParam = [&](string pName, float pVal) {
                             NetworkInput netIn;
                             netIn.cmd = NET_CMD_SET_PARAM;
-                            
                             NetCmdSetParam setParam;
-                            setParam.slave_id = info.newSlaveID;
-                            setParam.param_name = "TOGGLE";
-                            setParam.value = (info.toggle == "on") ? 1.0f : 0.0f;
+                            setParam.target_ip = info.slave_ip;
+                            setParam.slave_id = info.target_id;
+                            setParam.param_name = pName;
+                            setParam.value = pVal;
                             netIn.payload = setParam;
-                            
                             mainToNetQueue->push(netIn);
-                            printf("[ROUTER] Dispatched Toggle command for Slave %d.\n", setParam.slave_id);
+                        };
+
+                        if (info.newSlaveID != -999) {
+                            dispatchParam("ID", (float)info.newSlaveID);
+                            triModule.updateAvailableCamID(info.target_id, info.newSlaveID, info.slave_ip);
                         }
+                        if (info.thresh_value != -999) dispatchParam("THRESH", info.thresh_value);
+                        if (info.max_disappeared != -999) dispatchParam("MAX_DIS", info.max_disappeared);
+                        if (info.tracking_dist != -999) dispatchParam("TRACK_DIST", info.tracking_dist);
+                        if (info.brightness != -999) dispatchParam("BRIGHTNESS", info.brightness);
+                        if (info.gain != -999) dispatchParam("GAIN", info.gain);
+                        if (info.exposure != -999) dispatchParam("EXPOSURE", info.exposure);
+
                         break;
                     }
 

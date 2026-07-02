@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
+#include <iostream>
+#include <cstdlib>
 
 #include "../../lib/header/ringBuffer.hpp"
 #include "../../lib/header/threadQueue.hpp"
@@ -15,8 +17,32 @@
 using namespace std;
 using namespace cv;
 
-int main() {
+int main(int argc, char** argv) {
     printf("[SLAVE] Initializing MoCap Slave System...\n");
+    string srv_ip = "127.0.0.1";
+    int srv_port = 8080;
+    int initial_id = 1;
+
+    // Scan parameters from terminal
+    for (int i = 1; i < argc; ++i) {
+        string arg = argv[i];
+        
+        if (arg == "--ip" && i + 1 < argc) {
+            srv_ip = argv[++i]; 
+        } 
+        else if (arg == "--port" && i + 1 < argc) {
+            srv_port = stoi(argv[++i]);
+        } 
+        else if (arg == "--id" && i + 1 < argc) {
+            initial_id = stoi(argv[++i]);
+        }
+        else if (arg == "--help" || arg == "-h") {
+            printf("Usage: ./mocap_slave [--ip SERVER_IP] [--port SERVER_PORT] [--id SLAVE_ID]\n");
+            return 0; 
+        }
+    }
+
+    printf("[SLAVE] Boot Config -> Server: %s:%d | My ID: %d\n", srv_ip.c_str(), srv_port, initial_id);
 
     auto notiQueue = make_shared<ThreadSafeRingBuffer<SystemNotification>>(50);
     auto netInputQueue = make_shared<ThreadSafeRingBuffer<SlaveNetworkInput>>(50);
@@ -65,6 +91,7 @@ int main() {
                 
                 switch (payload.cmdOrigin) {
                     case NET_SERVER_CMD_TRACKING: {
+                        /*
                         if (payload.toggle == "on") {
                             captureModule.setState(CAPTURE_RUNNING);
                             processModule.setState(PROCESS_RUNNING);
@@ -77,10 +104,28 @@ int main() {
                             printf("[SLAVE FSM] Mode switched to IDLE.\n");
                         }
                         break;
+                        */
                     }
 
                     case NET_SERVER_CMD_CONFIG: {
-                        printf("[SLAVE FSM] Configuration updated from Server: ID = %d\n", payload.slave_id);
+                        string pName = payload.paramName;
+                        float pVal = payload.paramValue;
+                        
+                        if (pName == "ID") {
+                            int new_id = (int)pVal;
+                            netModule.setConfig(new_id);
+                            captureModule.setConfig("ID", pVal);
+                            processModule.setConfig("ID", pVal);
+                            printf("[SLAVE FSM] System ID permanently updated to: %d\n", new_id);
+                        } 
+                        else if (pName == "THRESH" || pName == "MAX_DIS" || pName == "TRACK_DIST") {
+                            processModule.setConfig(pName, pVal);
+                            printf("[SLAVE FSM] CV processing param %s updated to: %.2f\n", pName.c_str(), pVal);
+                        } 
+                        else if (pName == "BRIGHTNESS" || pName == "GAIN" || pName == "EXPOSURE") {
+                            captureModule.setConfig(pName, pVal);
+                            printf("[SLAVE FSM] Camera hardware param %s updated to: %.2f\n", pName.c_str(), pVal);
+                        }
                         break;
                     }
 

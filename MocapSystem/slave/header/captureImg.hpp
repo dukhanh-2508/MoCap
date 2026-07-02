@@ -19,6 +19,9 @@ class CaptureImgModule : public IModule<I, FramePacket> {
         int frameWidth = 1280;
         int frameHeight = 720;
         int cameraFPS = 30;
+        float brightness = -999.0f;
+        float gain = -999.0f;
+        float exposure = -999.0f;
         int slave_id = 0;
 
         bool openCamera();
@@ -32,9 +35,18 @@ class CaptureImgModule : public IModule<I, FramePacket> {
         void setCameraConfig(int width, int height, int fps, int s_id);
         void setState(int newState) override;
         void runModule() override;
+        void setConfig(string paramName, float value);
 };
 
 namespace fs = std::filesystem;
+
+template <typename I>
+void CaptureImgModule<I>::setConfig(string paramName, float value) {
+    if (paramName == "ID") this->slave_id = (int)value;
+    else if (paramName == "BRIGHTNESS") { this->brightness = value; if (camera.isOpened()) camera.set(CAP_PROP_BRIGHTNESS, value); }
+    else if (paramName == "GAIN") { this->gain = value; if (camera.isOpened()) camera.set(CAP_PROP_GAIN, value); }
+    else if (paramName == "EXPOSURE") { this->exposure = value; if (camera.isOpened()) camera.set(CAP_PROP_EXPOSURE, value); }
+}
 
 template <typename I>
 CaptureImgModule<I>::CaptureImgModule() : IModule<I, FramePacket>(20) {

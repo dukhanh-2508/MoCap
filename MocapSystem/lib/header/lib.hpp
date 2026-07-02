@@ -88,10 +88,21 @@ typedef struct {
 } network_Info;
 
 typedef struct {
-    string slave_ip = "";
-    bool getID = false;
-    int newSlaveID = 0;
-    string toggle = "";
+    string slave_ip; 
+    int target_id;
+
+    bool getID;
+    string toggle;
+
+    // For the following parameters, -999 means unchanged
+    int newSlaveID;
+    float thresh_value;
+    float max_disappeared;
+    float tracking_dist;
+    
+    float brightness;
+    float gain;
+    float exposure;
 } manageSlave_Info;
 
 typedef struct {
@@ -213,7 +224,12 @@ enum NETWORK_CMD {
 struct NetCmdConfig { int tcp_port; int udp_port; int udp_recv_port; string bind_ip; };
 struct NetCmdTrigger { uint64_t target_time_us; uint32_t frame_id; };
 struct NetCmdReqImage { int slave_id; string saveFolder; };
-struct NetCmdSetParam { int slave_id; string param_name; float value; };
+typedef struct {
+    string target_ip;
+    int slave_id;
+    string param_name;
+    float value;
+} NetCmdSetParam;
 struct NetCmdQueryInfo { int slave_id; };
 
 typedef struct {

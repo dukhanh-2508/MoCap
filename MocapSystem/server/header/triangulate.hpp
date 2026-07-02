@@ -26,7 +26,7 @@ class TriangulateModule : public IModule<I, NetworkOutputResult> {
         map<int, Mat> camera_D_coeffs;
 
         unordered_map<uint32_t, AlignedFrame> alignment_buffer;
-        vector<int> availableCamID;
+        unordered_map<int, string> availableCamID; // key is camera id and string is ip of the slave camera with that id
         uint32_t last_dispatched_frame = 0;
         int TOTAL_CAMERAS = 2;
         ofstream out_log; // ofstream - Output File Stream ==> Used to write logs to a log file
@@ -44,7 +44,40 @@ class TriangulateModule : public IModule<I, NetworkOutputResult> {
         void setState(int newState) override;
         void runModule() override;
         bool parseNetworkInput(const NetworkOutputResult inputData);
+        bool updateAvailableCamID(int oldCamID, int newCamID, string ip); // Called from main, update available ids when the user set a new id or modify an existing id
 };
+
+template <typename I>
+bool TriangulateModule<I>::updateAvailableCamID(int oldCamID, int newCamID, string ip) {
+    int key = -999;
+    bool isItemAlreadyAvailable = false;
+
+    if (oldCamID == -999 && !ip.empty()) { // Update ID using only IP
+        for (const auto& it : this->availableCamID) {
+            if (it.second == ip) {
+                key = it.first;   
+                isItemAlreadyAvailable = true;
+                break; 
+            }
+        }
+    } 
+    else if (oldCamID != -999) { // Update using old ID or old ID and IP
+        auto findID = this->availableCamID.find(oldCamID);
+        if (findID != this->availableCamID.end()) {
+            key = findID->first;
+            isItemAlreadyAvailable = true;
+        }
+    }
+
+    if (isItemAlreadyAvailable) {
+        this->availableCamID.erase(key);
+        this->availableCamID[newCamID] = ip;
+    } else {
+        this->availableCamID[newCamID] = ip;
+    }
+
+    return true;
+}
 
 template <typename I>
 void TriangulateModule<I>::assignCalibResultFolder(string resultFolder) {
@@ -55,7 +88,8 @@ template <typename I>
 void TriangulateModule<I>::loadCalibrationData(const string& calibFolder) {
     printf("[TRIANGULATE] Loading calibration data from: %s\n", calibFolder.c_str());
     
-    for (auto cam_id : this->availableCamID) {
+    for (auto item : this->availableCamID) {
+        int cam_id = item.first();
         Mat K, dist, R, T;
         bool intrinsicLoaded = false;
         bool extrinsicLoaded = false;

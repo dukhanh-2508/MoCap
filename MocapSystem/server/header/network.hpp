@@ -40,6 +40,7 @@ class NetworkModule : public IModule<I, NetworkOutputResult> {
         int udp_recv_fd = -1;
         int udp_recv_port = 0;
         string bind_ip = ""; // IP address to bind the server to (empty means INADDR_ANY)
+        unordered_map<string, int> ip_to_fd;
         
         unordered_map<int, int> slave_sockets; // K: slave_id, V: socket_fd
         unordered_map<int, string> pending_img_paths; // K: slave_id, V: save folder
@@ -186,6 +187,8 @@ void NetworkModule<I>::rxLoop() {
             int new_socket = accept(tcp_server_fd, (struct sockaddr*)&client_addr, &addrlen); // Accept new slave connection
             
             if (new_socket >= 0) {
+                string client_ip = inet_ntoa(client_addr.sin_addr);
+                ip_to_fd[client_ip] = new_socket;
                 sock_mtx.lock();
                 slave_sockets[new_socket] = new_socket; 
                 sock_mtx.unlock();
@@ -336,9 +339,29 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
         }
         case NET_CMD_SET_PARAM: {
             auto req = get<NetCmdSetParam>(input.payload);
-            string param_str = req.param_name + ":" + to_string(req.value);
-            sendTCPRequest(req.slave_id, PKT_CMD_SET_PARAM, param_str.c_str(), param_str.size());
-            printf("[NETWORK] Sent Param Set (%s) to Slave %d\n", param_str.c_str(), req.slave_id);
+            int target_fd = -1;
+            
+            if (req.target_ip != "" && ip_to_fd.count(req.target_ip)) {
+                target_fd = ip_to_fd[req.target_ip];
+            } 
+            else if (req.slave_id != -999 && slave_sockets.count(req.slave_id)) {
+                target_fd = slave_sockets[req.slave_id];
+            }
+
+            if (target_fd != -1) {
+                string param_str = req.param_name + ":" + to_string(req.value);
+                size_t total_payload_size = param_str.size();
+                
+                TCPHeader tcp_head = {PKT_CMD_SET_PARAM, (uint32_t)total_payload_size, 0};
+                
+                write(target_fd, &tcp_head, sizeof(TCPHeader));
+                write(target_fd, param_str.c_str(), total_payload_size);
+                
+                printf("[NETWORK] Sent Param Set (%s) to FD %d\n", param_str.c_str(), target_fd);
+            } else {
+                printf("[NETWORK] Failed to find target Slave for param config (IP: %s, ID: %d).\n", 
+                        req.target_ip.c_str(), req.slave_id);
+            }
             break;
         }
         case NET_CMD_QUERY_INFO: {

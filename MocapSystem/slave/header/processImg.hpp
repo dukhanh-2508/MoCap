@@ -38,7 +38,21 @@ class ProcessImgModule : public IModule<I, int> {
         void setConfig(int s_id);
         void setState(int newState) override;
         void runModule() override;
+        void setConfig(string paramName, float value);
 };
+
+template <typename I>
+void ProcessImgModule<I>::setConfig(string paramName, float value) {
+    if (paramName == "ID") {
+        this->slave_id = (int)value;
+    } else if (paramName == "THRESH") {
+        this->thresh_value = (int)value;
+    } else if (paramName == "MAX_DIS") {
+        this->max_disappeared = (int)value;
+    } else if (paramName == "TRACK_DIST") {
+        this->tracking_dist_threshold = value;
+    }
+}
 
 template <typename I>
 ProcessImgModule<I>::ProcessImgModule() : IModule<I, int>(20) {
