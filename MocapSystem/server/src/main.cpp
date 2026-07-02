@@ -18,6 +18,40 @@
 
 using namespace std;
 using namespace cv;
+namespace fs = filesystem;
+
+bool isSystemRunning = true;
+
+void triggerGenerator(shared_ptr<ThreadSafeRingBuffer<NetworkInput>> netQueue, MocapController* controller) {
+    uint32_t current_frame_id = 1;
+    int target_fps = 30;
+    auto frame_duration = chrono::microseconds(1000000 / target_fps);
+
+    while (isSystemRunning) {
+        if (controller->getCurrentState() == TRACK) { 
+            auto now = chrono::system_clock::now();
+            
+            auto target_time = now + chrono::duration_cast<chrono::milliseconds>(frame_duration) - chrono::milliseconds(3); // The 3 ms offset is to take into account transmission delay
+            uint64_t target_time_us = chrono::duration_cast<chrono::microseconds>(target_time.time_since_epoch()).count();
+            
+            NetworkInput netIn;
+            netIn.cmd = NET_CMD_BROADCAST_TRIGGER;
+            
+            NetCmdTrigger trig_payload;
+            trig_payload.frame_id = current_frame_id++;
+            trig_payload.target_time_us = target_time_us;
+            
+            netIn.payload = trig_payload;
+            netQueue->push(netIn);
+            
+            // Ngủ cho đến nhịp tiếp theo để giữ đúng 60 FPS
+            this_thread::sleep_for(frame_duration);
+        } else {
+            // Nếu không ở mode TRACKING, ngủ 100ms để nhường CPU
+            this_thread::sleep_for(chrono::milliseconds(100));
+        }
+    }
+}
 
 int main() {
     printf("[SYSTEM] Initializing MoCap System...\n");
@@ -32,6 +66,13 @@ int main() {
     CalibModule<CLIOutputResult> calibModule;
     NetworkModule<NetworkInput> netModule;
     TriangulateModule<NetworkOutputResult> triModule;
+
+    string calibResultFolder = "./calibResult";
+    if(!fs::exists(calibResultFolder)) {
+        fs::create_directories(calibResultFolder);
+    }
+    calibModule.setResultFolderDest(calibResultFolder);
+    triModule.assignCalibResultFolder(calibResultFolder);
 
     // Routing
     // Assign central notification queue to all modules
@@ -62,7 +103,7 @@ int main() {
     thread triThread(&TriangulateModule<NetworkOutputResult>::runModule, &triModule);
 
     MocapController controller;
-    bool isSystemRunning = true;
+    thread triggerThread(triggerGenerator, mainToNetQueue, &controller);
 
     printf("[SYSTEM] All modules started. Entering Controller FSM...\n");
 
@@ -93,11 +134,6 @@ int main() {
                             calibModule.setState(CALIB_RUNNING);
                             printf("[ROUTER] System switched to CALIBRATION MODE.\n");
                         }
-                        break;
-                    }
-
-                    case CLI_CALIB_SET: {
-                        printf("[ROUTER] Calibration parameters routed to CalibModule.\n");
                         break;
                     }
 
@@ -207,7 +243,8 @@ int main() {
     if (calibThread.joinable()) calibThread.join();
     if (netThread.joinable()) netThread.join();
     if (triThread.joinable()) triThread.join();
+    if (triggerThread.joinable()) triggerThread.join();
 
-    printf("[SYSTEM] All modules terminated. Goodbye!\n");
+    printf("[SYSTEM] All modules terminated!\n");
     return 0;
 }

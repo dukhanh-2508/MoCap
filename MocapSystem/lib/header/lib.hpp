@@ -70,10 +70,12 @@ typedef struct {
     string imgSrc = "";
     bool startCalibCalc = false;
     string calibMode = "";
+    int targetID;
 } calib_Info;
 
 typedef struct {
     string triangulateMode = "";
+    string calibResultPath = "";
 } triangulate_Info;
 
 typedef struct {
@@ -114,6 +116,7 @@ typedef struct {
     CalibBoardDesc desc;
     string dataFolderIn;
     string dataFolderEx;
+    int targetID;
 } CalibSettings;
 
 typedef struct {

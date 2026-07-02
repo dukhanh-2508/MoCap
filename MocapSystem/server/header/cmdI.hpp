@@ -48,10 +48,10 @@ void CLIModule<I>::runModule() {
     calib->add_option("--imgSrcEx", imgSrcEx, "Img folder");
     bool startCalibCalc = false;
     calib->add_option("--startCalib", startCalibCalc, "Start ex/in calib calc");
-    string imgSrc = "";
-    calib->add_option("--imgSrc", imgSrc, "Img folder");
     string calibMode = "";
     calib->add_option("--mode", calibMode, "Change calib mode (ex / in)");
+    int targetCameraID = 0;
+    calib->add_option("--id", targetCameraID, "Select camera to calibrate");
     int row = 0, col = 0;
     calib->add_option("--row", row, "Amount of rows of the board, in checker square amount");
     calib->add_option("--col", col, "Amount of cols of the board, in checker square amount");
@@ -62,6 +62,8 @@ void CLIModule<I>::runModule() {
     CLI::App* triangulation = app.add_subcommand("triangulate");
     string triangulateMode = "";
     triangulation->add_option("--mode", triangulateMode);
+    string resultFolder = "";
+    triangulation->add_option("--calibPath", resultFolder, "Path to a folder with intrinsic and extrinsic calib data. Need to be the same as 'imgSrcIn' of calib");
 
     // Commands for network block
     CLI::App* set_cmd = app.add_subcommand("set", "Change parameters");
@@ -119,8 +121,8 @@ void CLIModule<I>::runModule() {
         if (input_line.empty()) continue;
 
         mainMode = ""; subMode = "";
-        imgSrcIn = ""; imgSrcEx = ""; startCalibCalc = false; calibMode = ""; row = 0; col = 0; squareSize = 0;
-        triangulateMode = "";
+        imgSrcIn = ""; imgSrcEx = ""; startCalibCalc = false; calibMode = ""; targetCameraID = 0; row = 0; col = 0; squareSize = 0;
+        triangulateMode = ""; resultFolder = "";
         confNetworkMaster = false; confNetworkSlave = false; 
         confTX = false; confRX = false; port = 0; ip = "";
         slave_ip = ""; getID = false; newSlaveID = 0; toggle = "";
@@ -166,6 +168,10 @@ void CLIModule<I>::runModule() {
                     if (calibMode == "ex") get<CalibSettings>(result.result).calibMode = CALIB_MODE_EX;
                     else if (calibMode == "in") get<CalibSettings>(result.result).calibMode = CALIB_MODE_IN;
                 }
+                if (calib->count("--id") > 0) {
+                    calib_info.targetID = targetCameraID;
+                    get<CalibSettings>(result.result).targetID = targetCameraID;
+                }
                 if (calib->count("--row") > 0) {
                     get<CalibSettings>(result.result).desc.row = row;
                 }
@@ -185,6 +191,7 @@ void CLIModule<I>::runModule() {
             else if (triangulation->parsed()) {
                 triangulate_Info tri_info;
                 if (triangulation->count("--mode") > 0) tri_info.triangulateMode = triangulateMode;
+                if (triangulation->count("--calibPath") > 0) tri_info.calibResultPath = resultFolder;
                 
                 payload.cmdOrigin = CLI_TRIANGULATE_SET;
                 payload.info = tri_info;

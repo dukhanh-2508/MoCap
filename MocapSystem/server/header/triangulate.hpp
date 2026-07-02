@@ -19,8 +19,14 @@ using namespace cv;
 template <typename I>
 class TriangulateModule : public IModule<I, NetworkOutputResult> {
     private:
+        string calibResultFolder;
+
         map<int, Mat> camera_projections;
+        map<int, Mat> camera_K_matrices; 
+        map<int, Mat> camera_D_coeffs;
+
         unordered_map<uint32_t, AlignedFrame> alignment_buffer;
+        vector<int> availableCamID;
         uint32_t last_dispatched_frame = 0;
         int TOTAL_CAMERAS = 2;
         ofstream out_log; // ofstream - Output File Stream ==> Used to write logs to a log file
@@ -32,12 +38,71 @@ class TriangulateModule : public IModule<I, NetworkOutputResult> {
         TriangulateModule();
         ~TriangulateModule();
         
-        void register_camera(int cam_id, const Mat& K, const Mat& R, const Mat& T);
+        void assignCalibResultFolder(string resultFolder);
+        void loadCalibrationData(const string& calibFolder);
+        void register_camera(int cam_id, const Mat& K, const Mat& D, const Mat& R, const Mat& T);
         void setState(int newState) override;
         void runModule() override;
         bool parseNetworkInput(const NetworkOutputResult inputData);
 };
 
+template <typename I>
+void TriangulateModule<I>::assignCalibResultFolder(string resultFolder) {
+    this->calibResultFolder = resultFolder;
+}
+
+template <typename I>
+void TriangulateModule<I>::loadCalibrationData(const string& calibFolder) {
+    printf("[TRIANGULATE] Loading calibration data from: %s\n", calibFolder.c_str());
+    
+    for (auto cam_id : this->availableCamID) {
+        Mat K, dist, R, T;
+        bool intrinsicLoaded = false;
+        bool extrinsicLoaded = false;
+
+        // Read intrinsic
+        string inPath = calibFolder + "/intrinsic_result_cam_" + to_string(cam_id) + "/camera_params_cam_" + to_string(cam_id) + ".yml";
+        FileStorage fsIn(inPath, FileStorage::READ);
+        
+        if (fsIn.isOpened()) {
+            fsIn["K"] >> K;
+            fsIn["dist"] >> dist;
+            if (!K.empty() && !dist.empty()) intrinsicLoaded = true;
+            fsIn.release();
+        } else {
+            printf("[TRIANGULATE] Warning: Cannot open Intrinsic file %s\n", inPath.c_str());
+        }
+
+        // Read extrinsic
+        string exPath = calibFolder + "/extrinsic_result_cam_" + to_string(cam_id) + "/extrinsic_params_cam_" + to_string(cam_id) + ".yml";
+        FileStorage fsEx(exPath, FileStorage::READ);
+        
+        if (fsEx.isOpened()) {
+            FileNode root = fsEx.root();
+            
+            for (auto it = root.begin(); it != root.end(); ++it) {
+                FileNode item = *it;
+                if (item.type() == FileNode::MAP && !item["R_Matrix"].empty() && !item["T_Vector"].empty()) {
+                    item["R_Matrix"] >> R;
+                    item["T_Vector"] >> T;
+                    extrinsicLoaded = true;
+                    
+                    break; 
+                }
+            }
+            fsEx.release();
+        } else {
+            printf("[TRIANGULATE] Warning: Cannot open Extrinsic file %s\n", exPath.c_str());
+        }
+
+        if (intrinsicLoaded && extrinsicLoaded) {
+            register_camera(cam_id, K, dist, R, T);
+            printf("[TRIANGULATE] Successfully loaded full params for Camera %d\n", cam_id);
+        } else {
+            printf("[TRIANGULATE] Error: Incomplete calibration data for Camera %d\n", cam_id);
+        }
+    }
+}
 
 template <typename I>
 TriangulateModule<I>::TriangulateModule() : IModule<I, NetworkOutputResult>(20) {
@@ -54,7 +119,10 @@ TriangulateModule<I>::~TriangulateModule() {
 }
 
 template <typename I>
-void TriangulateModule<I>::register_camera(int cam_id, const Mat& K, const Mat& R, const Mat& T) {
+void TriangulateModule<I>::register_camera(int cam_id, const Mat& K, const Mat& D, const Mat& R, const Mat& T) {
+    camera_K_matrices[cam_id] = K.clone();
+    camera_D_coeffs[cam_id] = D.clone();
+    
     Mat Rt;
     hconcat(R, T, Rt);
     camera_projections[cam_id] = K * Rt;
@@ -62,6 +130,14 @@ void TriangulateModule<I>::register_camera(int cam_id, const Mat& K, const Mat& 
 
 template <typename I>
 void TriangulateModule<I>::setState(int newState) {
+    if (newState == TRIANGULATE_RUNNING && this->moduleState != TRIANGULATE_RUNNING) {
+        if (!this->calibResultFolder.empty()) {
+            loadCalibrationData(this->calibResultFolder); 
+        } else {
+            printf("[TRIANGULATE] Calib result folder not found. Failed to load calib result");
+        }
+    }
+
     this->moduleState = newState;
 }
 
@@ -69,7 +145,7 @@ template <typename I>
 bool TriangulateModule<I>::parseNetworkInput(const NetworkOutputResult inputData) {
     if (inputData.origin == TRACKING_COORD) { // Input data must be marker tracking data
         CameraPacket pkt = get<CameraPacket>(inputData.result);
-        
+
         if (pkt.header.frame_id <= last_dispatched_frame && last_dispatched_frame > 0) {
             return true; 
         }
@@ -148,6 +224,29 @@ void TriangulateModule<I>::process_aligned_frame(const AlignedFrame& frame) {
     for (const auto& pair : frame.camera_data) {
         int cam_id = pair.first;
         const CameraPacket& pkt = pair.second;
+
+        // Undistort the images
+        vector<Point2f> raw_pts, ideal_pts;
+        vector<int> obj_ids;
+        
+        for (const auto& center : pkt.centers) {
+            raw_pts.push_back(Point2f(center.x, center.y));
+            obj_ids.push_back(center.object_id);
+        }
+
+        if (!raw_pts.empty() && camera_K_matrices.count(cam_id) && camera_D_coeffs.count(cam_id)) {
+            undistortPoints(raw_pts, ideal_pts, 
+                                camera_K_matrices[cam_id], 
+                                camera_D_coeffs[cam_id], 
+                                cv::noArray(), 
+                                camera_K_matrices[cam_id]);
+                                
+            for (size_t i = 0; i < ideal_pts.size(); ++i) {
+                frame_data_3d[obj_ids[i]].push_back(
+                    CameraObservation{cam_id, ideal_pts[i]}
+                );
+            }
+        }
         
         for (const auto& center : pkt.centers) {
             frame_data_3d[center.object_id].push_back(

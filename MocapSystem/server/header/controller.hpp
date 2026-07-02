@@ -23,7 +23,7 @@ MocapController::MocapController() {
 }
 
 SYSTEM_STATE MocapController::getCurrentState() {
-
+    return this->currentState;
 }
 
 SYSTEM_STATE MocapController::changeState(const SYSTEM_STATE newState) {

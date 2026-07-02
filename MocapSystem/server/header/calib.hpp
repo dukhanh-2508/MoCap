@@ -18,6 +18,8 @@ class CalibModule : public IModule<I, CalibOutputResult> {
         CalibBoardDesc desc;
         string dataFolderIn;
         string dataFolderEx;
+        int targetCameraID;
+        string resultFolder; // Result for both ex and in calib are put here
 
         void runIntrinsicCalib();
         void runExtrinsicCalib();
@@ -25,10 +27,18 @@ class CalibModule : public IModule<I, CalibOutputResult> {
         CalibModule();
         ~CalibModule();
 
+        void setResultFolderDest(string path);
         void setState(int newState) override;
         void runModule() override;
         bool parseCLIInput(const CLIOutputResult inputData);
 };
+
+template <typename I>
+void CalibModule<I>::setResultFolderDest(string path) {
+    if (!path.empty()) {
+        this->resultFolder = path;
+    }
+}
 
 template <typename I>
 CalibModule<I>::CalibModule() : IModule<I, CalibOutputResult>(20) {
@@ -50,7 +60,7 @@ void CalibModule<I>::runIntrinsicCalib() {
     printf("[CALIB Intrinsic] Intrinsic Calibration Running...\n");
     
     // Create output folder
-    string outFolder = this->dataFolderIn + "/intrinsic_result";
+    string outFolder = this->resultFolder + "/intrinsic_result_cam_" + to_string(this->targetCameraID);
     if (!fs::exists(outFolder)) fs::create_directory(outFolder);
 
     // Setup 3D World Coord System (WCS)
@@ -119,7 +129,7 @@ void CalibModule<I>::runIntrinsicCalib() {
     double meanError = sqrt(totalErr / totalPoints);
 
     // Save calib results
-    FileStorage fs(outFolder + "/camera_params.yml", FileStorage::WRITE);
+    FileStorage fs(outFolder + "/camera_params_cam_" + to_string(this->targetCameraID) + ".yml", FileStorage::WRITE);
     fs << "K" << K;
     fs << "dist" << dist;
     fs << "RMS" << rms;
@@ -135,12 +145,12 @@ void CalibModule<I>::runExtrinsicCalib() {
     printf("[CALIB Extrinsic] Extrinsic Calibration Running...\n");
     
     // Create output folder
-    string outFolder = this->dataFolderEx + "/extrinsic_result";
+    string outFolder = this->resultFolder + "/extrinsic_result_cam_" + to_string(this->targetCameraID); // Use dataFolderIn to make it more convinient to access both intrinsic and extrinsic results
     if (!fs::exists(outFolder)) fs::create_directory(outFolder);
 
     // Load intrinsic calib results
     Mat K, dist;
-    string intrinsicPath = this->dataFolderEx + "/intrinsic_result/camera_params.yml";
+    string intrinsicPath = this->resultFolder + "/intrinsic_result" + "/camera_params_cam_" + to_string(this->targetCameraID) + ".yml";
     if (fs::exists(intrinsicPath)) {
         FileStorage fsIn(intrinsicPath, FileStorage::READ);
         fsIn["K"] >> K;
@@ -159,7 +169,7 @@ void CalibModule<I>::runExtrinsicCalib() {
         }
     }
 
-    FileStorage fsOut(outFolder + "/extrinsic_params.yml", FileStorage::WRITE);
+    FileStorage fsOut(outFolder + "/extrinsic_params_cam_" + to_string(this->targetCameraID) + ".yml", FileStorage::WRITE);
 
     for (const auto & entry : fs::directory_iterator(this->dataFolderEx)) {
         if (entry.path().extension() == ".jpg" || entry.path().extension() == ".png") {
@@ -221,6 +231,7 @@ bool CalibModule<I>::parseCLIInput(const CLIOutputResult inputData) {
         this->desc = get<CalibSettings>(inputData.result).desc;
         this->dataFolderIn = get<CalibSettings>(inputData.result).dataFolderIn;
         this->dataFolderEx = get<CalibSettings>(inputData.result).dataFolderEx;
+        this->targetCameraID = get<CalibSettings>(inputData.result).targetID;
 
         this->setState(get<CalibSettings>(inputData.result).calibState);
 
