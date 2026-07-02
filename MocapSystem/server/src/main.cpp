@@ -109,7 +109,8 @@ int main() {
                         
                         NetCmdConfig cfg;
                         cfg.tcp_port = info.port;
-                        cfg.udp_port = info.port + 1; // Auto offset for UDP
+                        cfg.udp_port = info.port + 1; // For timing trigger
+                        cfg.udp_recv_port = info.port + 2; // For tracking data
                         cfg.bind_ip = info.ip;
                         
                         netIn.payload = cfg;

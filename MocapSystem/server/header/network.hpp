@@ -37,6 +37,8 @@ class NetworkModule : public IModule<I, NetworkOutputResult> {
         int udp_broadcast_fd = -1; // File descriptor for the UDP broadcast socket
         int udp_port = 0; // Port used for broadcasting UDP timing triggers
         int tcp_port = 0; // Port used for listening to incoming TCP connections
+        int udp_recv_fd = -1;
+        int udp_recv_port = 0;
         string bind_ip = ""; // IP address to bind the server to (empty means INADDR_ANY)
         
         unordered_map<int, int> slave_sockets; // K: slave_id, V: socket_fd
@@ -103,6 +105,21 @@ void NetworkModule<I>::initNetwork() {
     // In non-blocking mode, those functions will immediately return if socket has no data
     fcntl(tcp_server_fd, F_SETFL, O_NONBLOCK);
 
+    // Set up UDP socket for mocap tracking data
+    udp_recv_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in recv_addr;
+    recv_addr.sin_family = AF_INET;
+    recv_addr.sin_addr.s_addr = bind_ip.empty() ? INADDR_ANY : inet_addr(bind_ip.c_str());
+    recv_addr.sin_port = htons(udp_recv_port);
+
+    if (bind(udp_recv_fd, (struct sockaddr*)&recv_addr, sizeof(recv_addr)) < 0) {
+        perror("[NETWORK] Failed to bind UDP Receive Port");
+    } else {
+        printf("[NETWORK] Listening for UDP Tracking on Port %d\n", udp_recv_port);
+    }
+    fcntl(udp_recv_fd, F_SETFL, O_NONBLOCK);
+    ////////
+
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
@@ -145,7 +162,9 @@ void NetworkModule<I>::rxLoop() {
     while (is_running) {
         FD_ZERO(&readfds); // Clear sockets
         FD_SET(tcp_server_fd, &readfds); // Add the main TCP server socket
+        FD_SET(udp_recv_fd, &readfds);
         int max_sd = tcp_server_fd;
+        if (udp_recv_fd > max_sd) max_sd = udp_recv_fd;
 
         sock_mtx.lock();
         for (auto const& [id, fd] : slave_sockets) {
@@ -160,6 +179,7 @@ void NetworkModule<I>::rxLoop() {
         int activity = select(max_sd + 1, &readfds, NULL, NULL, &tv);
         if (activity < 0) continue;
 
+        // Process received TCP packets
         if (FD_ISSET(tcp_server_fd, &readfds)) {
             struct sockaddr_in client_addr;
             socklen_t addrlen = sizeof(client_addr); // Create a new file descriptor from new slave 
@@ -170,6 +190,31 @@ void NetworkModule<I>::rxLoop() {
                 slave_sockets[new_socket] = new_socket; 
                 sock_mtx.unlock();
                 printf("[NETWORK] New slave connected. FD: %d\n", new_socket);
+            }
+        }
+
+        // Process received UDP packets
+        if (FD_ISSET(udp_recv_fd, &readfds)) {
+            uint8_t buffer[2048];
+            struct sockaddr_in slave_addr;
+            socklen_t addr_len = sizeof(slave_addr);
+            
+            int bytes_read = recvfrom(udp_recv_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&slave_addr, &addr_len);
+            
+            if (bytes_read >= sizeof(CameraPacketHeader)) {
+                CameraPacket pkt;
+                memcpy(&pkt.header, buffer, sizeof(CameraPacketHeader));
+                
+                size_t expected_size = sizeof(CameraPacketHeader) + pkt.header.centerCount * sizeof(CenterPacket);
+                if (bytes_read >= expected_size) {
+                    pkt.centers.resize(pkt.header.centerCount);
+                    memcpy(pkt.centers.data(), buffer + sizeof(CameraPacketHeader), pkt.header.centerCount * sizeof(CenterPacket));
+                    
+                    NetworkOutputResult outResult;
+                    outResult.origin = TRACKING_COORD;
+                    outResult.result = pkt;
+                    this->outputData->push(outResult);
+                }
             }
         }
 
@@ -191,20 +236,7 @@ void NetworkModule<I>::rxLoop() {
                         int temp_fd = fd;
                         slave_sockets.erase(id);
                         slave_sockets[header.slave_id] = temp_fd;
-                    } 
-                    else if (header.type == PKT_CAMERA_DATA) {
-                        CameraPacket pkt;
-                        read(fd, &pkt.header, sizeof(CameraPacketHeader));
-                        
-                        pkt.centers.resize(pkt.header.centerCount);
-                        size_t centers_size = pkt.header.centerCount * sizeof(CenterPacket);
-                        read(fd, pkt.centers.data(), centers_size);
-
-                        NetworkOutputResult outResult;
-                        outResult.origin = TRACKING_COORD;
-                        outResult.result = pkt;
-                        this->outputData->push(outResult);
-                    } 
+                    }
                     else if (header.type == PKT_IMAGE_DATA) {
                         // Save image request
                         string folder = pending_img_paths.count(header.slave_id) ? pending_img_paths[header.slave_id] : ".";
@@ -287,6 +319,7 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
             auto cfg = get<NetCmdConfig>(input.payload);
             this->tcp_port = cfg.tcp_port;
             this->udp_port = cfg.udp_port;
+            this->udp_recv_port = cfg.udp_recv_port;
             this->bind_ip = cfg.bind_ip;
             break;
         }

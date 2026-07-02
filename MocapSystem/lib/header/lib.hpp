@@ -207,7 +207,7 @@ enum NETWORK_CMD {
     NET_CMD_QUERY_INFO = 4
 };
 
-struct NetCmdConfig { int tcp_port; int udp_port; string bind_ip; };
+struct NetCmdConfig { int tcp_port; int udp_port; int udp_recv_port; string bind_ip; };
 struct NetCmdTrigger { uint64_t target_time_us; uint32_t frame_id; };
 struct NetCmdReqImage { int slave_id; string saveFolder; };
 struct NetCmdSetParam { int slave_id; string param_name; float value; };

@@ -22,6 +22,8 @@ class NetworkModule : public IModule<I, CaptureTrigger> {
     private:
         int tcp_client_fd = -1;
         int udp_listen_fd = -1;
+        int udp_tx_fd = -1;
+        struct sockaddr_in server_udp_addr;
     
         string server_ip = "127.0.0.1";
         int tcp_port = 8080;
@@ -105,6 +107,13 @@ void NetworkModule<I>::initNetwork() {
 
     // Send Handshake packet to register slave_id with server
     sendTCPPacket(PKT_HANDSHAKE, nullptr, 0);
+
+    // Create socket UDP
+    udp_tx_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    memset(&server_udp_addr, 0, sizeof(server_udp_addr));
+    server_udp_addr.sin_family = AF_INET;
+    server_udp_addr.sin_port = htons(tcp_port + 2);
+    inet_pton(AF_INET, server_ip.c_str(), &server_udp_addr.sin_addr);
 
     // Start background threads
     udp_rx_thread = thread(&NetworkModule::udpRxLoop, this);
@@ -271,17 +280,16 @@ void NetworkModule<I>::runModule() {
             sendFileTCP(netIn->filepath);
         } 
         else if (netIn->type == SLAVE_NET_SEND_TRACKING) {
-            // Construct payload: Header + Centers array
             size_t centers_size = netIn->cameraData.centers.size() * sizeof(CenterPacket);
             size_t total_payload_size = sizeof(CameraPacketHeader) + centers_size;
 
-            lock_guard<mutex> lock(tcp_tx_mtx);
-            TCPHeader tcp_head = {PKT_CAMERA_DATA, (uint32_t)total_payload_size, this->slave_id};
-            write(tcp_client_fd, &tcp_head, sizeof(TCPHeader));
+            vector<uint8_t> udp_buffer(total_payload_size);
             
-            // Send CameraPacket parts
-            write(tcp_client_fd, &netIn->cameraData.header, sizeof(CameraPacketHeader));
-            write(tcp_client_fd, netIn->cameraData.centers.data(), centers_size);
+            memcpy(udp_buffer.data(), &netIn->cameraData.header, sizeof(CameraPacketHeader));
+            memcpy(udp_buffer.data() + sizeof(CameraPacketHeader), netIn->cameraData.centers.data(), centers_size);
+
+            sendto(udp_tx_fd, udp_buffer.data(), total_payload_size, 0, 
+                (struct sockaddr*)&server_udp_addr, sizeof(server_udp_addr));
         }
     }
 }
