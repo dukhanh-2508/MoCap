@@ -1,0 +1,23 @@
+giờ tới phần viết code. 
+trước hết, hãy viết lại hàm tạo camera, marker, và checker board để có thể xử lý
+được nhiều parameter mô tả hơn:
+ - cho camera: có thể nhận vào và tạo camera theo đầu vào có tọa độ (theo WCS)
+   , góc xoay (theo euler angle), tiêu cự f (mm), hệ số k và l (pix/mm), 
+   c_x (px) và c_y (px)
+   Giả định camera có max res là 4608 x 2592 px, Horizontal FOV khoảng 66 độ, 
+   và Vertical FOV khoảng 41 độ.
+ - cho marker: tạo marker hình cầu, nhận đầu vào là tọa độ marker, bán kính, và độ sáng
+ - cho checker board: cho phép nhận đầu vào là số hàng, cột, và độ dài một cạnh
+   mỗi ô vuông (mm) (checker ô vuông). checker board có 8 hàng, 11 cột, checker width là 15mm mỗi ô.
+
+Về setup của simulation: tạo cho tôi một cái checker board có một góc của ô vuông đặt tại
+tâm O của WCS. Tuân theo quy ước WCS của blender, góc này sẽ chính là góc giữa Oy và -Ox, đặt trên z = 0. Checker board nằm gọn trong phần mặt phẳng -xOy đó.
+Một marker được để trên một tọa độ xác định trên checker để tiện kiểm tra. Ngoài ra, tạo
+sẵn thêm hai cái checker board cùng size, nhưng hai cái này thì tôi có thể di chuyển
+trước camera để làm intrinsic calib. Tiếp, về camera, tôi muốn đặt chúng ở (-4, 0, -1.2) và (-4, 4.62, -1.2) theo x, y, z.
+Bạn hãy tự quyết định góc euler để hướng chúng về phía marker. 
+
+Sau đó, hãy viết code cho hệ thống bpy để chụp ảnh từ góc độ các camera. Các bức ảnh
+sau đó được dùng python gửi qua port trong máy 9do người dùng tự điều hướng) để kết
+nối với backend python xử lý. Việc chụp ảnh sẽ là đồng bộ tuyệt đối giữa các camera,
+nhưng người dùng có thể quyết định fps, số lần chụp.

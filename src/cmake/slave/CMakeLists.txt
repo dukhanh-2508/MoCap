@@ -12,7 +12,9 @@ file(
 
 find_package(Threads REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(OpenCV REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+include_directories(${OpenCV_INCLUDE_DIRS})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE zmq Threads::Threads spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE zmq Threads::Threads spdlog::spdlog ${OpenCV_LIBS})

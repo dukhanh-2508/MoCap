@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/MocapSlave.dir/link.d"
   "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.o"
   "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.o.d"
+  "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o"
+  "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o.d"
   "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp.o"
   "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp.o.d"
   "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/receiver.cpp.o"

@@ -34,7 +34,7 @@ void setupLogger() {
     spdlog::set_default_logger(logger);
 }
 
-int main() {
+int main(int argc, char** argv) {
     setupLogger();
 
     DataQueue<AlignedFrame> dataQueue;
@@ -55,7 +55,8 @@ int main() {
     OrchestratorConfig orch_cfg = {
         .glcfg = glcfg,
         .orch_port = 5555,
-        .orch_ip = "255.255.255.255",
+        .timesSendPacket = 0,
+        .orch_ip = "10.42.0.255",
     };
     
     OrchestratorFunctor orch(orch_cfg);
@@ -82,7 +83,17 @@ int main() {
     
     CLI::App* switch_cmd = app.add_subcommand("exit", "Exit the system");
 
+    CLI::App* controlled_capture_cmd = app.add_subcommand("ctlcap", "Command slaves to take picture in a controlled manner");
+    int takePicAmount = 0;
+    controlled_capture_cmd->add_option("--amount", takePicAmount, "Command slaves to take N images. N = -1 means inf times");
+
+    CLI::App* delay_measure_cap_cmd = app.add_subcommand("dlm", "Command slaves to take pictures to measure synchronization delay (using visual binary timecode method)");
+    // This command is not in use
+    int picMeasureAmount = 0;
+    delay_measure_cap_cmd->add_option("--amount", picMeasureAmount, "Command slaves to take N images (excluding a reference image at the beginning)");
+
     cout << "Use '--help' for help and 'exit' to quit the program'" << endl;
+
 
     string input_line;
     while (glcfg.is_running) {
@@ -132,6 +143,14 @@ int main() {
                     prs.changeConnection(prs_cfg);
                     configPrs = false;
                 }
+            }
+            if (controlled_capture_cmd->parsed()) {
+                orch_cfg.timesSendPacket = takePicAmount;
+                orch.currentTimesSendPacket = 0;
+            }
+            if (delay_measure_cap_cmd->parsed()) {
+                orch_cfg.timesSendPacket = picMeasureAmount;
+                orch.currentTimesSendPacket = 0;
             }
         } catch (const CLI::ParseError &e) {
             app.exit(e);

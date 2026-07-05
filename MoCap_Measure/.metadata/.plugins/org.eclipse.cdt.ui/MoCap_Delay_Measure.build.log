@@ -1,0 +1,17 @@
+16:14:24 **** Incremental Build of configuration Debug for project MoCap_Delay_Measure ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xC -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "MoCap_Delay_Measure.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/khanh/Programming/Thesis/Thesis_1/MoCap_Delay_Measure/STM32F401RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MoCap_Delay_Measure.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MoCap_Delay_Measure.elf
+ 
+arm-none-eabi-size  MoCap_Delay_Measure.elf 
+arm-none-eabi-objdump -h -S MoCap_Delay_Measure.elf  > "MoCap_Delay_Measure.list"
+   text	   data	    bss	    dec	    hex	filename
+   9068	     16	   1656	  10740	   29f4	MoCap_Delay_Measure.elf
+Finished building: default.size.stdout
+ 
+Finished building: MoCap_Delay_Measure.list
+ 
+
+16:14:25 Build Finished. 0 errors, 0 warnings. (took 447ms)
+

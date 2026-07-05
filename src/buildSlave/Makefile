@@ -154,6 +154,30 @@ home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MocapSlave.dir/build.make CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.s
 .PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.s
 
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.o: home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.o
+
+# target to build an object file
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MocapSlave.dir/build.make CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o
+
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.i: home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.i
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.i
+
+# target to preprocess a source file
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MocapSlave.dir/build.make CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.i
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.i
+
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.s: home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.s
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.s
+
+# target to generate assembly for a file
+home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MocapSlave.dir/build.make CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.s
+.PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.s
+
 home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.o: home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp.o
 .PHONY : home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.o
 
@@ -238,6 +262,9 @@ help:
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.o"
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.i"
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.s"
+	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.o"
+	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.i"
+	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.s"
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.o"
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.i"
 	@echo "... home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.s"

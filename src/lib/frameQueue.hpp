@@ -34,6 +34,17 @@ class DataQueue {
             return true;
         }
 
+        bool pop_for(T& frame, int timeout_ms) {
+            unique_lock<mutex> lock(mtx);
+            if (cv.wait_for(lock, chrono::milliseconds(timeout_ms), [this] { return !queue.empty() || stop; })) {
+                if (stop && queue.empty()) return false;
+                frame = move(queue.front());
+                queue.pop();
+                return true;
+            }
+            return false; // Hết giờ chờ mà vẫn chưa có lệnh
+        }
+
         void shutdown() {
             {
                 lock_guard<std::mutex> lock(mtx);

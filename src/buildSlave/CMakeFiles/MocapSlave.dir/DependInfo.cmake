@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.o" "gcc" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/imgProcessing.cpp.o.d"
+  "/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o" "gcc" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/locateMarker.cpp.o.d"
   "/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp.o" "gcc" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/main.cpp.o.d"
   "/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/receiver.cpp" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/receiver.cpp.o" "gcc" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/receiver.cpp.o.d"
   "/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/sender.cpp" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/sender.cpp.o" "gcc" "CMakeFiles/MocapSlave.dir/home/khanh/Programming/Thesis/Thesis_1/src/slave/src/sender.cpp.o.d"

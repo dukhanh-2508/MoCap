@@ -6,9 +6,12 @@
 
 #include "../lib/lib.hpp"
 
+#define SEND_INFINITE_TIMES -1
+
 class OrchestratorFunctor {
     private:
         bool* isRunning;
+        int* timesSendPacket;
         int orchPort;
         string orchIP;
         bool needsUpdate;
@@ -20,6 +23,7 @@ class OrchestratorFunctor {
         bool createSocket();
 
     public:
+        int currentTimesSendPacket;
         OrchestratorFunctor(OrchestratorConfig& cfg);
 
         bool operator()();

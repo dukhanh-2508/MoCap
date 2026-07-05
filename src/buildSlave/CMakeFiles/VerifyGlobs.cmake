@@ -28,6 +28,7 @@ endif()
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/*.cpp")
 set(OLD_GLOB
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/src/imgProcessing.cpp"
+  "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/src/locateMarker.cpp"
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/src/main.cpp"
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/src/receiver.cpp"
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/src/sender.cpp"
@@ -41,6 +42,7 @@ endif()
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/*.hpp")
 set(OLD_GLOB
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/imgProcessing.hpp"
+  "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/locateMarker.hpp"
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/receiver.hpp"
   "/home/khanh/Programming/Thesis/Thesis_1/src/cmake/slave/../../slave/sender.hpp"
   )

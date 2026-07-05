@@ -64,6 +64,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/bits/invoke.h
  /usr/include/c++/14/bits/ios_base.h
  /usr/include/c++/14/bits/istream.tcc
+ /usr/include/c++/14/bits/list.tcc
  /usr/include/c++/14/bits/locale_classes.h
  /usr/include/c++/14/bits/locale_classes.tcc
  /usr/include/c++/14/bits/locale_conv.h
@@ -107,6 +108,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/bits/stl_iterator.h
  /usr/include/c++/14/bits/stl_iterator_base_funcs.h
  /usr/include/c++/14/bits/stl_iterator_base_types.h
+ /usr/include/c++/14/bits/stl_list.h
  /usr/include/c++/14/bits/stl_map.h
  /usr/include/c++/14/bits/stl_multimap.h
  /usr/include/c++/14/bits/stl_multiset.h
@@ -138,11 +140,14 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/cassert
  /usr/include/c++/14/cctype
  /usr/include/c++/14/cerrno
+ /usr/include/c++/14/cfloat
  /usr/include/c++/14/chrono
+ /usr/include/c++/14/climits
  /usr/include/c++/14/clocale
  /usr/include/c++/14/cmath
  /usr/include/c++/14/codecvt
  /usr/include/c++/14/compare
+ /usr/include/c++/14/complex
  /usr/include/c++/14/concepts
  /usr/include/c++/14/condition_variable
  /usr/include/c++/14/cstddef
@@ -175,12 +180,15 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/istream
  /usr/include/c++/14/iterator
  /usr/include/c++/14/limits
+ /usr/include/c++/14/list
  /usr/include/c++/14/locale
  /usr/include/c++/14/map
+ /usr/include/c++/14/math.h
  /usr/include/c++/14/memory
  /usr/include/c++/14/mutex
  /usr/include/c++/14/new
  /usr/include/c++/14/numeric
+ /usr/include/c++/14/optional
  /usr/include/c++/14/ostream
  /usr/include/c++/14/pstl/execution_defs.h
  /usr/include/c++/14/pstl/glue_algorithm_defs.h
@@ -192,6 +200,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/set
  /usr/include/c++/14/sstream
  /usr/include/c++/14/stdexcept
+ /usr/include/c++/14/stdlib.h
  /usr/include/c++/14/streambuf
  /usr/include/c++/14/string
  /usr/include/c++/14/string_view
@@ -223,7 +232,10 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/fmt/core.h
  /usr/include/fmt/format.h
  /usr/include/libintl.h
+ /usr/include/limits.h
+ /usr/include/linux/close_range.h
  /usr/include/linux/errno.h
+ /usr/include/linux/limits.h
  /usr/include/linux/posix_types.h
  /usr/include/linux/sched/types.h
  /usr/include/linux/stddef.h
@@ -231,8 +243,118 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/locale.h
  /usr/include/math.h
  /usr/include/netinet/in.h
+ /usr/include/opencv4/opencv2/calib3d.hpp
+ /usr/include/opencv4/opencv2/core.hpp
+ /usr/include/opencv4/opencv2/core/affine.hpp
+ /usr/include/opencv4/opencv2/core/async.hpp
+ /usr/include/opencv4/opencv2/core/base.hpp
+ /usr/include/opencv4/opencv2/core/bufferpool.hpp
+ /usr/include/opencv4/opencv2/core/check.hpp
+ /usr/include/opencv4/opencv2/core/cuda.hpp
+ /usr/include/opencv4/opencv2/core/cuda.inl.hpp
+ /usr/include/opencv4/opencv2/core/cuda_types.hpp
+ /usr/include/opencv4/opencv2/core/cv_cpu_dispatch.h
+ /usr/include/opencv4/opencv2/core/cvdef.h
+ /usr/include/opencv4/opencv2/core/cvstd.hpp
+ /usr/include/opencv4/opencv2/core/cvstd.inl.hpp
+ /usr/include/opencv4/opencv2/core/cvstd_wrapper.hpp
+ /usr/include/opencv4/opencv2/core/fast_math.hpp
+ /usr/include/opencv4/opencv2/core/hal/interface.h
+ /usr/include/opencv4/opencv2/core/mat.hpp
+ /usr/include/opencv4/opencv2/core/mat.inl.hpp
+ /usr/include/opencv4/opencv2/core/matx.hpp
+ /usr/include/opencv4/opencv2/core/matx.inl.hpp
+ /usr/include/opencv4/opencv2/core/neon_utils.hpp
+ /usr/include/opencv4/opencv2/core/operations.hpp
+ /usr/include/opencv4/opencv2/core/optim.hpp
+ /usr/include/opencv4/opencv2/core/ovx.hpp
+ /usr/include/opencv4/opencv2/core/persistence.hpp
+ /usr/include/opencv4/opencv2/core/saturate.hpp
+ /usr/include/opencv4/opencv2/core/traits.hpp
+ /usr/include/opencv4/opencv2/core/types.hpp
+ /usr/include/opencv4/opencv2/core/utility.hpp
+ /usr/include/opencv4/opencv2/core/utils/logger.defines.hpp
+ /usr/include/opencv4/opencv2/core/utils/logger.hpp
+ /usr/include/opencv4/opencv2/core/utils/logtag.hpp
+ /usr/include/opencv4/opencv2/core/version.hpp
+ /usr/include/opencv4/opencv2/core/vsx_utils.hpp
+ /usr/include/opencv4/opencv2/dnn.hpp
+ /usr/include/opencv4/opencv2/dnn/dict.hpp
+ /usr/include/opencv4/opencv2/dnn/dnn.hpp
+ /usr/include/opencv4/opencv2/dnn/dnn.inl.hpp
+ /usr/include/opencv4/opencv2/dnn/layer.hpp
+ /usr/include/opencv4/opencv2/dnn/utils/inference_engine.hpp
+ /usr/include/opencv4/opencv2/dnn/version.hpp
+ /usr/include/opencv4/opencv2/features2d.hpp
+ /usr/include/opencv4/opencv2/flann.hpp
+ /usr/include/opencv4/opencv2/flann/all_indices.h
+ /usr/include/opencv4/opencv2/flann/allocator.h
+ /usr/include/opencv4/opencv2/flann/any.h
+ /usr/include/opencv4/opencv2/flann/autotuned_index.h
+ /usr/include/opencv4/opencv2/flann/composite_index.h
+ /usr/include/opencv4/opencv2/flann/config.h
+ /usr/include/opencv4/opencv2/flann/defines.h
+ /usr/include/opencv4/opencv2/flann/dist.h
+ /usr/include/opencv4/opencv2/flann/dynamic_bitset.h
+ /usr/include/opencv4/opencv2/flann/flann_base.hpp
+ /usr/include/opencv4/opencv2/flann/general.h
+ /usr/include/opencv4/opencv2/flann/ground_truth.h
+ /usr/include/opencv4/opencv2/flann/heap.h
+ /usr/include/opencv4/opencv2/flann/hierarchical_clustering_index.h
+ /usr/include/opencv4/opencv2/flann/index_testing.h
+ /usr/include/opencv4/opencv2/flann/kdtree_index.h
+ /usr/include/opencv4/opencv2/flann/kdtree_single_index.h
+ /usr/include/opencv4/opencv2/flann/kmeans_index.h
+ /usr/include/opencv4/opencv2/flann/linear_index.h
+ /usr/include/opencv4/opencv2/flann/logger.h
+ /usr/include/opencv4/opencv2/flann/lsh_index.h
+ /usr/include/opencv4/opencv2/flann/lsh_table.h
+ /usr/include/opencv4/opencv2/flann/matrix.h
+ /usr/include/opencv4/opencv2/flann/miniflann.hpp
+ /usr/include/opencv4/opencv2/flann/nn_index.h
+ /usr/include/opencv4/opencv2/flann/params.h
+ /usr/include/opencv4/opencv2/flann/random.h
+ /usr/include/opencv4/opencv2/flann/result_set.h
+ /usr/include/opencv4/opencv2/flann/sampling.h
+ /usr/include/opencv4/opencv2/flann/saving.h
+ /usr/include/opencv4/opencv2/flann/timer.h
+ /usr/include/opencv4/opencv2/highgui.hpp
+ /usr/include/opencv4/opencv2/imgcodecs.hpp
+ /usr/include/opencv4/opencv2/imgproc.hpp
+ /usr/include/opencv4/opencv2/imgproc/segmentation.hpp
+ /usr/include/opencv4/opencv2/ml.hpp
+ /usr/include/opencv4/opencv2/ml/ml.inl.hpp
+ /usr/include/opencv4/opencv2/objdetect.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_board.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_detector.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_dictionary.hpp
+ /usr/include/opencv4/opencv2/objdetect/barcode.hpp
+ /usr/include/opencv4/opencv2/objdetect/charuco_detector.hpp
+ /usr/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp
+ /usr/include/opencv4/opencv2/objdetect/face.hpp
+ /usr/include/opencv4/opencv2/objdetect/graphical_code_detector.hpp
+ /usr/include/opencv4/opencv2/opencv.hpp
+ /usr/include/opencv4/opencv2/opencv_modules.hpp
+ /usr/include/opencv4/opencv2/photo.hpp
+ /usr/include/opencv4/opencv2/stitching.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/blenders.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/camera.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/exposure_compensate.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/matchers.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/seam_finders.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/util.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/util_inl.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/warpers.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/warpers_inl.hpp
+ /usr/include/opencv4/opencv2/stitching/warpers.hpp
+ /usr/include/opencv4/opencv2/video.hpp
+ /usr/include/opencv4/opencv2/video/background_segm.hpp
+ /usr/include/opencv4/opencv2/video/tracking.hpp
+ /usr/include/opencv4/opencv2/videoio.hpp
  /usr/include/pthread.h
  /usr/include/sched.h
+ /usr/include/signal.h
  /usr/include/spdlog/async.h
  /usr/include/spdlog/async_logger.h
  /usr/include/spdlog/common.h
@@ -268,6 +390,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/string.h
  /usr/include/strings.h
  /usr/include/time.h
+ /usr/include/unistd.h
  /usr/include/wchar.h
  /usr/include/wctype.h
  /usr/include/x86_64-linux-gnu/asm/bitsperlong.h
@@ -279,19 +402,24 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/asm/types.h
  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h
  /usr/include/x86_64-linux-gnu/bits/byteswap.h
+ /usr/include/x86_64-linux-gnu/bits/confname.h
  /usr/include/x86_64-linux-gnu/bits/cpu-set.h
  /usr/include/x86_64-linux-gnu/bits/endian.h
  /usr/include/x86_64-linux-gnu/bits/endianness.h
+ /usr/include/x86_64-linux-gnu/bits/environments.h
  /usr/include/x86_64-linux-gnu/bits/errno.h
  /usr/include/x86_64-linux-gnu/bits/floatn-common.h
  /usr/include/x86_64-linux-gnu/bits/floatn.h
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h
  /usr/include/x86_64-linux-gnu/bits/in.h
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h
  /usr/include/x86_64-linux-gnu/bits/locale.h
  /usr/include/x86_64-linux-gnu/bits/long-double.h
  /usr/include/x86_64-linux-gnu/bits/math-vector.h
@@ -299,15 +427,31 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/mathcalls-macros.h
  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h
+ /usr/include/x86_64-linux-gnu/bits/posix1_lim.h
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h
  /usr/include/x86_64-linux-gnu/bits/sched.h
  /usr/include/x86_64-linux-gnu/bits/select.h
  /usr/include/x86_64-linux-gnu/bits/setjmp.h
+ /usr/include/x86_64-linux-gnu/bits/sigaction.h
+ /usr/include/x86_64-linux-gnu/bits/sigcontext.h
+ /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h
+ /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h
+ /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h
+ /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h
+ /usr/include/x86_64-linux-gnu/bits/signal_ext.h
+ /usr/include/x86_64-linux-gnu/bits/signum-arch.h
+ /usr/include/x86_64-linux-gnu/bits/signum-generic.h
+ /usr/include/x86_64-linux-gnu/bits/sigstack.h
+ /usr/include/x86_64-linux-gnu/bits/sigstksz.h
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h
  /usr/include/x86_64-linux-gnu/bits/sockaddr.h
  /usr/include/x86_64-linux-gnu/bits/socket.h
  /usr/include/x86_64-linux-gnu/bits/socket_type.h
+ /usr/include/x86_64-linux-gnu/bits/ss_flags.h
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h
@@ -328,19 +472,26 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h
  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h
  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h
  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h
  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h
  /usr/include/x86_64-linux-gnu/bits/types/error_t.h
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h
  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h
+ /usr/include/x86_64-linux-gnu/bits/types/stack_t.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h
  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h
@@ -349,11 +500,14 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h
  /usr/include/x86_64-linux-gnu/bits/typesizes.h
  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h
  /usr/include/x86_64-linux-gnu/bits/waitflags.h
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h
  /usr/include/x86_64-linux-gnu/bits/wchar.h
  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h
  /usr/include/x86_64-linux-gnu/bits/wordsize.h
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h
@@ -376,9 +530,19 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/sys/single_threaded.h
  /usr/include/x86_64-linux-gnu/sys/socket.h
  /usr/include/x86_64-linux-gnu/sys/types.h
+ /usr/include/x86_64-linux-gnu/sys/ucontext.h
+ /usr/include/zmq.h
+ /usr/include/zmq.hpp
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/emmintrin.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/float.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mm_malloc.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mmintrin.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/xmmintrin.h
 
 CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/orchestrator.cpp.o
  /home/khanh/Programming/Thesis/Thesis_1/src/server/src/orchestrator.cpp
@@ -761,6 +925,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/bits/invoke.h
  /usr/include/c++/14/bits/ios_base.h
  /usr/include/c++/14/bits/istream.tcc
+ /usr/include/c++/14/bits/list.tcc
  /usr/include/c++/14/bits/locale_classes.h
  /usr/include/c++/14/bits/locale_classes.tcc
  /usr/include/c++/14/bits/locale_conv.h
@@ -804,11 +969,17 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/bits/stl_iterator.h
  /usr/include/c++/14/bits/stl_iterator_base_funcs.h
  /usr/include/c++/14/bits/stl_iterator_base_types.h
+ /usr/include/c++/14/bits/stl_list.h
+ /usr/include/c++/14/bits/stl_map.h
+ /usr/include/c++/14/bits/stl_multimap.h
+ /usr/include/c++/14/bits/stl_multiset.h
  /usr/include/c++/14/bits/stl_pair.h
  /usr/include/c++/14/bits/stl_queue.h
  /usr/include/c++/14/bits/stl_raw_storage_iter.h
  /usr/include/c++/14/bits/stl_relops.h
+ /usr/include/c++/14/bits/stl_set.h
  /usr/include/c++/14/bits/stl_tempbuf.h
+ /usr/include/c++/14/bits/stl_tree.h
  /usr/include/c++/14/bits/stl_uninitialized.h
  /usr/include/c++/14/bits/stl_vector.h
  /usr/include/c++/14/bits/stream_iterator.h
@@ -829,10 +1000,13 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/cassert
  /usr/include/c++/14/cctype
  /usr/include/c++/14/cerrno
+ /usr/include/c++/14/cfloat
  /usr/include/c++/14/chrono
+ /usr/include/c++/14/climits
  /usr/include/c++/14/clocale
  /usr/include/c++/14/cmath
  /usr/include/c++/14/compare
+ /usr/include/c++/14/complex
  /usr/include/c++/14/concepts
  /usr/include/c++/14/condition_variable
  /usr/include/c++/14/cstddef
@@ -863,7 +1037,10 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/istream
  /usr/include/c++/14/iterator
  /usr/include/c++/14/limits
+ /usr/include/c++/14/list
  /usr/include/c++/14/locale
+ /usr/include/c++/14/map
+ /usr/include/c++/14/math.h
  /usr/include/c++/14/memory
  /usr/include/c++/14/mutex
  /usr/include/c++/14/new
@@ -875,8 +1052,10 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/c++/14/pstl/pstl_config.h
  /usr/include/c++/14/queue
  /usr/include/c++/14/ratio
+ /usr/include/c++/14/set
  /usr/include/c++/14/sstream
  /usr/include/c++/14/stdexcept
+ /usr/include/c++/14/stdlib.h
  /usr/include/c++/14/streambuf
  /usr/include/c++/14/string
  /usr/include/c++/14/string_view
@@ -908,14 +1087,125 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/fmt/core.h
  /usr/include/fmt/format.h
  /usr/include/libintl.h
+ /usr/include/limits.h
  /usr/include/linux/close_range.h
  /usr/include/linux/errno.h
+ /usr/include/linux/limits.h
  /usr/include/linux/posix_types.h
  /usr/include/linux/sched/types.h
  /usr/include/linux/stddef.h
  /usr/include/linux/types.h
  /usr/include/locale.h
  /usr/include/math.h
+ /usr/include/opencv4/opencv2/calib3d.hpp
+ /usr/include/opencv4/opencv2/core.hpp
+ /usr/include/opencv4/opencv2/core/affine.hpp
+ /usr/include/opencv4/opencv2/core/async.hpp
+ /usr/include/opencv4/opencv2/core/base.hpp
+ /usr/include/opencv4/opencv2/core/bufferpool.hpp
+ /usr/include/opencv4/opencv2/core/check.hpp
+ /usr/include/opencv4/opencv2/core/cuda.hpp
+ /usr/include/opencv4/opencv2/core/cuda.inl.hpp
+ /usr/include/opencv4/opencv2/core/cuda_types.hpp
+ /usr/include/opencv4/opencv2/core/cv_cpu_dispatch.h
+ /usr/include/opencv4/opencv2/core/cvdef.h
+ /usr/include/opencv4/opencv2/core/cvstd.hpp
+ /usr/include/opencv4/opencv2/core/cvstd.inl.hpp
+ /usr/include/opencv4/opencv2/core/cvstd_wrapper.hpp
+ /usr/include/opencv4/opencv2/core/fast_math.hpp
+ /usr/include/opencv4/opencv2/core/hal/interface.h
+ /usr/include/opencv4/opencv2/core/mat.hpp
+ /usr/include/opencv4/opencv2/core/mat.inl.hpp
+ /usr/include/opencv4/opencv2/core/matx.hpp
+ /usr/include/opencv4/opencv2/core/matx.inl.hpp
+ /usr/include/opencv4/opencv2/core/neon_utils.hpp
+ /usr/include/opencv4/opencv2/core/operations.hpp
+ /usr/include/opencv4/opencv2/core/optim.hpp
+ /usr/include/opencv4/opencv2/core/ovx.hpp
+ /usr/include/opencv4/opencv2/core/persistence.hpp
+ /usr/include/opencv4/opencv2/core/saturate.hpp
+ /usr/include/opencv4/opencv2/core/traits.hpp
+ /usr/include/opencv4/opencv2/core/types.hpp
+ /usr/include/opencv4/opencv2/core/utility.hpp
+ /usr/include/opencv4/opencv2/core/utils/logger.defines.hpp
+ /usr/include/opencv4/opencv2/core/utils/logger.hpp
+ /usr/include/opencv4/opencv2/core/utils/logtag.hpp
+ /usr/include/opencv4/opencv2/core/version.hpp
+ /usr/include/opencv4/opencv2/core/vsx_utils.hpp
+ /usr/include/opencv4/opencv2/dnn.hpp
+ /usr/include/opencv4/opencv2/dnn/dict.hpp
+ /usr/include/opencv4/opencv2/dnn/dnn.hpp
+ /usr/include/opencv4/opencv2/dnn/dnn.inl.hpp
+ /usr/include/opencv4/opencv2/dnn/layer.hpp
+ /usr/include/opencv4/opencv2/dnn/utils/inference_engine.hpp
+ /usr/include/opencv4/opencv2/dnn/version.hpp
+ /usr/include/opencv4/opencv2/features2d.hpp
+ /usr/include/opencv4/opencv2/flann.hpp
+ /usr/include/opencv4/opencv2/flann/all_indices.h
+ /usr/include/opencv4/opencv2/flann/allocator.h
+ /usr/include/opencv4/opencv2/flann/any.h
+ /usr/include/opencv4/opencv2/flann/autotuned_index.h
+ /usr/include/opencv4/opencv2/flann/composite_index.h
+ /usr/include/opencv4/opencv2/flann/config.h
+ /usr/include/opencv4/opencv2/flann/defines.h
+ /usr/include/opencv4/opencv2/flann/dist.h
+ /usr/include/opencv4/opencv2/flann/dynamic_bitset.h
+ /usr/include/opencv4/opencv2/flann/flann_base.hpp
+ /usr/include/opencv4/opencv2/flann/general.h
+ /usr/include/opencv4/opencv2/flann/ground_truth.h
+ /usr/include/opencv4/opencv2/flann/heap.h
+ /usr/include/opencv4/opencv2/flann/hierarchical_clustering_index.h
+ /usr/include/opencv4/opencv2/flann/index_testing.h
+ /usr/include/opencv4/opencv2/flann/kdtree_index.h
+ /usr/include/opencv4/opencv2/flann/kdtree_single_index.h
+ /usr/include/opencv4/opencv2/flann/kmeans_index.h
+ /usr/include/opencv4/opencv2/flann/linear_index.h
+ /usr/include/opencv4/opencv2/flann/logger.h
+ /usr/include/opencv4/opencv2/flann/lsh_index.h
+ /usr/include/opencv4/opencv2/flann/lsh_table.h
+ /usr/include/opencv4/opencv2/flann/matrix.h
+ /usr/include/opencv4/opencv2/flann/miniflann.hpp
+ /usr/include/opencv4/opencv2/flann/nn_index.h
+ /usr/include/opencv4/opencv2/flann/params.h
+ /usr/include/opencv4/opencv2/flann/random.h
+ /usr/include/opencv4/opencv2/flann/result_set.h
+ /usr/include/opencv4/opencv2/flann/sampling.h
+ /usr/include/opencv4/opencv2/flann/saving.h
+ /usr/include/opencv4/opencv2/flann/timer.h
+ /usr/include/opencv4/opencv2/highgui.hpp
+ /usr/include/opencv4/opencv2/imgcodecs.hpp
+ /usr/include/opencv4/opencv2/imgproc.hpp
+ /usr/include/opencv4/opencv2/imgproc/segmentation.hpp
+ /usr/include/opencv4/opencv2/ml.hpp
+ /usr/include/opencv4/opencv2/ml/ml.inl.hpp
+ /usr/include/opencv4/opencv2/objdetect.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_board.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_detector.hpp
+ /usr/include/opencv4/opencv2/objdetect/aruco_dictionary.hpp
+ /usr/include/opencv4/opencv2/objdetect/barcode.hpp
+ /usr/include/opencv4/opencv2/objdetect/charuco_detector.hpp
+ /usr/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp
+ /usr/include/opencv4/opencv2/objdetect/face.hpp
+ /usr/include/opencv4/opencv2/objdetect/graphical_code_detector.hpp
+ /usr/include/opencv4/opencv2/opencv.hpp
+ /usr/include/opencv4/opencv2/opencv_modules.hpp
+ /usr/include/opencv4/opencv2/photo.hpp
+ /usr/include/opencv4/opencv2/stitching.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/blenders.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/camera.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/exposure_compensate.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/matchers.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/seam_finders.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/util.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/util_inl.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/warpers.hpp
+ /usr/include/opencv4/opencv2/stitching/detail/warpers_inl.hpp
+ /usr/include/opencv4/opencv2/stitching/warpers.hpp
+ /usr/include/opencv4/opencv2/video.hpp
+ /usr/include/opencv4/opencv2/video/background_segm.hpp
+ /usr/include/opencv4/opencv2/video/tracking.hpp
+ /usr/include/opencv4/opencv2/videoio.hpp
  /usr/include/pthread.h
  /usr/include/sched.h
  /usr/include/signal.h
@@ -966,6 +1256,7 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h
  /usr/include/x86_64-linux-gnu/bits/locale.h
  /usr/include/x86_64-linux-gnu/bits/long-double.h
  /usr/include/x86_64-linux-gnu/bits/math-vector.h
@@ -973,6 +1264,8 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/mathcalls-macros.h
  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h
+ /usr/include/x86_64-linux-gnu/bits/posix1_lim.h
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h
@@ -1039,12 +1332,14 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h
  /usr/include/x86_64-linux-gnu/bits/typesizes.h
  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h
  /usr/include/x86_64-linux-gnu/bits/waitflags.h
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h
  /usr/include/x86_64-linux-gnu/bits/wchar.h
  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h
  /usr/include/x86_64-linux-gnu/bits/wordsize.h
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h
@@ -1067,9 +1362,16 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/include/x86_64-linux-gnu/sys/ucontext.h
  /usr/include/zmq.h
  /usr/include/zmq.hpp
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/emmintrin.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/float.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mm_malloc.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/mmintrin.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/xmmintrin.h
 
 CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/receiver.cpp.o
  /home/khanh/Programming/Thesis/Thesis_1/src/server/src/receiver.cpp
@@ -1411,14 +1713,38 @@ CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
 
 MocapServer
+ /lib/i386-linux-gnu/libGLX.so.0
+ /lib/i386-linux-gnu/libGLdispatch.so.0
+ /lib/i386-linux-gnu/libX11.so.6
+ /lib/i386-linux-gnu/libXau.so.6
+ /lib/i386-linux-gnu/libXdmcp.so.6
+ /lib/i386-linux-gnu/libbsd.so.0
+ /lib/i386-linux-gnu/libcom_err.so.2
+ /lib/i386-linux-gnu/libgssapi_krb5.so.2
+ /lib/i386-linux-gnu/libk5crypto.so.3
+ /lib/i386-linux-gnu/libkeyutils.so.1
+ /lib/i386-linux-gnu/libkrb5.so.3
+ /lib/i386-linux-gnu/libkrb5support.so.0
+ /lib/i386-linux-gnu/libmd.so.0
+ /lib/i386-linux-gnu/libresolv.so.2
+ /lib/i386-linux-gnu/libxcb.so.1
+ /lib/i386-linux-gnu/libz.so.1
+ /lib/x86_64-linux-gnu/libGLX.so.0
+ /lib/x86_64-linux-gnu/libGLdispatch.so.0
+ /lib/x86_64-linux-gnu/libX11.so.6
+ /lib/x86_64-linux-gnu/libXau.so.6
+ /lib/x86_64-linux-gnu/libXdmcp.so.6
+ /lib/x86_64-linux-gnu/libblas.so.3
  /lib/x86_64-linux-gnu/libbsd.so.0
  /lib/x86_64-linux-gnu/libc.so.6
  /lib/x86_64-linux-gnu/libcom_err.so.2
+ /lib/x86_64-linux-gnu/libgfortran.so.5
  /lib/x86_64-linux-gnu/libgssapi_krb5.so.2
  /lib/x86_64-linux-gnu/libk5crypto.so.3
  /lib/x86_64-linux-gnu/libkeyutils.so.1
  /lib/x86_64-linux-gnu/libkrb5.so.3
  /lib/x86_64-linux-gnu/libkrb5support.so.0
+ /lib/x86_64-linux-gnu/liblapack.so.3
  /lib/x86_64-linux-gnu/libm.so.6
  /lib/x86_64-linux-gnu/libmd.so.0
  /lib/x86_64-linux-gnu/libmvec.so.1
@@ -1426,6 +1752,9 @@ MocapServer
  /lib/x86_64-linux-gnu/libpgm-5.3.so.0
  /lib/x86_64-linux-gnu/libresolv.so.2
  /lib/x86_64-linux-gnu/libsodium.so.23
+ /lib/x86_64-linux-gnu/libtbb.so.12
+ /lib/x86_64-linux-gnu/libxcb.so.1
+ /lib/x86_64-linux-gnu/libz.so.1
  /lib64/ld-linux-x86-64.so.2
  /usr/lib/x86_64-linux-gnu/Scrt1.o
  /usr/lib/x86_64-linux-gnu/crti.o
@@ -1439,8 +1768,79 @@ MocapServer
  /usr/lib/gcc/x86_64-linux-gnu/14/libgcc.a
  /usr/lib/gcc/x86_64-linux-gnu/14/libgcc_s.so
  /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so
+ /usr/lib/i386-linux-gnu/libGLX.so.0
+ /usr/lib/i386-linux-gnu/libGLdispatch.so.0
+ /usr/lib/i386-linux-gnu/libX11.so.6
+ /usr/lib/i386-linux-gnu/libXau.so.6
+ /usr/lib/i386-linux-gnu/libXdmcp.so.6
+ /usr/lib/i386-linux-gnu/libbsd.so.0
+ /usr/lib/i386-linux-gnu/libcom_err.so.2
+ /usr/lib/i386-linux-gnu/libgssapi_krb5.so.2
+ /usr/lib/i386-linux-gnu/libk5crypto.so.3
+ /usr/lib/i386-linux-gnu/libkeyutils.so.1
+ /usr/lib/i386-linux-gnu/libkrb5.so.3
+ /usr/lib/i386-linux-gnu/libkrb5support.so.0
+ /usr/lib/i386-linux-gnu/libmd.so.0
+ /usr/lib/i386-linux-gnu/libresolv.so.2
+ /usr/lib/i386-linux-gnu/libxcb.so.1
+ /usr/lib/i386-linux-gnu/libz.so.1
  /usr/lib/x86_64-linux-gnu/libc_nonshared.a
  /usr/lib/x86_64-linux-gnu/libfmt.so.10.1.0
+ /usr/lib/x86_64-linux-gnu/libopencv_alphamat.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_aruco.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_bgsegm.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_bioinspired.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_calib3d.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_ccalib.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_core.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_cvv.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_datasets.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_dnn.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_dnn_objdetect.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_dnn_superres.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_dpm.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_face.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_features2d.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_flann.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_freetype.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_fuzzy.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_hdf.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_hfs.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_highgui.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_img_hash.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_imgcodecs.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_intensity_transform.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_line_descriptor.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_mcc.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_ml.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_objdetect.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_optflow.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_phase_unwrapping.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_plot.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_quality.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_rapid.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_reg.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_rgbd.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_saliency.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_shape.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_signal.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_stereo.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_stitching.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_structured_light.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_superres.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_surface_matching.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_text.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_tracking.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_video.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_videostab.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_viz.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_wechat_qrcode.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_ximgproc.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_xobjdetect.so.4.10.0
+ /usr/lib/x86_64-linux-gnu/libopencv_xphoto.so.4.10.0
  /usr/lib/x86_64-linux-gnu/libspdlog.so.1.15.1
  /home/khanh/Programming/Thesis/Thesis_1/src/buildServer/CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/main.cpp.o
  /home/khanh/Programming/Thesis/Thesis_1/src/buildServer/CMakeFiles/MocapServer.dir/home/khanh/Programming/Thesis/Thesis_1/src/server/src/orchestrator.cpp.o

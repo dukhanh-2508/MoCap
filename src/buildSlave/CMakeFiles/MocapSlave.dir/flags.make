@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DFMT_SHARED -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DSPDLOG_SHARED_LIB
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -isystem /usr/include/opencv4
 
 CXX_FLAGS = 
 
