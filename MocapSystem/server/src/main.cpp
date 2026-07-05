@@ -24,7 +24,7 @@ bool isSystemRunning = true;
 
 void triggerGenerator(shared_ptr<ThreadSafeRingBuffer<NetworkInput>> netQueue, MocapController* controller) {
     uint32_t current_frame_id = 1;
-    int target_fps = 30;
+    int target_fps = controller->getFPS();
     auto frame_duration = chrono::microseconds(1000000 / target_fps);
 
     while (isSystemRunning) {
@@ -43,18 +43,32 @@ void triggerGenerator(shared_ptr<ThreadSafeRingBuffer<NetworkInput>> netQueue, M
             
             netIn.payload = trig_payload;
             netQueue->push(netIn);
+
+            if (controller->getFPS() != target_fps) {
+                target_fps = controller->getFPS();
+                frame_duration = chrono::microseconds(1000000 / target_fps);
+            }
             
-            // Ngủ cho đến nhịp tiếp theo để giữ đúng 60 FPS
             this_thread::sleep_for(frame_duration);
         } else {
-            // Nếu không ở mode TRACKING, ngủ 100ms để nhường CPU
             this_thread::sleep_for(chrono::milliseconds(100));
         }
     }
 }
 
-int main() {
-    printf("[SYSTEM] Initializing MoCap System...\n");
+int main(int argc, char** argv) {
+    string triggerBand = "255.255.255.255";
+    
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+
+        if (arg == "--triggerBand" && i + 1 < argc) { // Trigger band is an IP band for server to boardcast trigger messages
+            triggerBand = argv[++i];
+        }
+    }
+
+
+    printf("\n[SYSTEM] Initializing MoCap System...\n");
 
     // Initialize main notification queue 
     auto notiQueue = make_shared<ThreadSafeRingBuffer<SystemNotification>>(50);
@@ -64,8 +78,12 @@ int main() {
     // Passing dummy types for inputs where they are overriden or unused
     CLIModule<int> cliModule;
     CalibModule<CLIOutputResult> calibModule;
-    NetworkModule<NetworkInput> netModule;
+    NetworkModule<NetworkInput> netModule; netModule.setudpTriggerIPBand(triggerBand);
     TriangulateModule<NetworkOutputResult> triModule;
+
+    // Gan san cho tien
+    triModule.updateAvailableCamID(-999, 1, string("10.42.0.212"));
+    triModule.updateAvailableCamID(-999, 0, string("10.42.0.1"));
 
     string calibResultFolder = "./calibResult";
     if(!fs::exists(calibResultFolder)) {
@@ -93,8 +111,8 @@ int main() {
 
     // Start Modules Threads
     cliModule.setState(CLI_RUNNING);
+    netModule.setState(NETWORK_RUNNING);
     calibModule.setState(CALIB_IDLE);
-    netModule.setState(NETWORK_IDLE);
     triModule.setState(TRIANGULATE_IDLE);
 
     thread cliThread(&CLIModule<int>::runModule, &cliModule);
@@ -105,7 +123,7 @@ int main() {
     MocapController controller;
     thread triggerThread(triggerGenerator, mainToNetQueue, &controller);
 
-    printf("[SYSTEM] All modules started. Entering Controller FSM...\n");
+    printf("\n[SYSTEM] All modules started. Entering Controller FSM...\n");
 
     // Main Event Loop (Controller/Router)
     while(isSystemRunning) {
@@ -123,17 +141,41 @@ int main() {
                         if (info.mainMode == "track") {
                             controller.changeState(TRACK);
                             calibModule.setState(CALIB_IDLE);
-                            netModule.setState(NETWORK_RUNNING);
                             triModule.setState(TRIANGULATE_RUNNING);
-                            printf("[ROUTER] System switched to TRACKING MODE.\n");
+                            printf("\n[ROUTER] System switched to TRACKING MODE.\n");
                         } 
                         else if (info.mainMode == "calib") {
                             controller.changeState(CALIB_STATE);
-                            netModule.setState(NETWORK_IDLE);
                             triModule.setState(TRIANGULATE_IDLE);
                             calibModule.setState(CALIB_RUNNING);
-                            printf("[ROUTER] System switched to CALIBRATION MODE.\n");
+                            printf("\n[ROUTER] System switched to CALIBRATION MODE.\n");
+                        } else if (info.mainMode == "idle") {
+                            controller.changeState(IDLE);
+                            triModule.setState(TRIANGULATE_IDLE);
+                            calibModule.setState(CALIB_IDLE);
+                            printf("\n[ROUTER] System switched to IDLE MODE.\n");
                         }
+                        break;
+                    }
+
+                    case CLI_SYS_CFG: {
+                        systemCfg_Info cfg = get<systemCfg_Info>(payload.info);
+
+                        if (cfg.sysFPS != -999) {
+                            controller.changeFPS(cfg.sysFPS);
+
+                            // Logic to update camera FPS but my camera cant change FPS parameter now so skip
+                        }
+
+                        break;
+                    }
+
+                    case CLI_CALIB_SET: {
+                        calib_Info info = get<calib_Info>(payload.info);
+
+                        if (info.target_rms != -999.0f) calibModule.setConfig("TARGET_RMS", info.target_rms);
+                        if (info.min_images != -999) calibModule.setConfig("MIN_IMAGE", info.min_images);
+
                         break;
                     }
 
@@ -152,7 +194,7 @@ int main() {
                         netIn.payload = cfg;
                         mainToNetQueue->push(netIn);
                         
-                        printf("[ROUTER] Network configurations dispatched.\n");
+                        printf("\n[ROUTER] Network configurations dispatched.\n");
                         break;
                     }
 
@@ -181,6 +223,13 @@ int main() {
                         if (info.brightness != -999) dispatchParam("BRIGHTNESS", info.brightness);
                         if (info.gain != -999) dispatchParam("GAIN", info.gain);
                         if (info.exposure != -999) dispatchParam("EXPOSURE", info.exposure);
+                        if (info.resWidth != -999) dispatchParam("RESW", info.resWidth);
+                        if (info.resHeight != -999) dispatchParam("RESH", info.resHeight);
+                        if (info.camFPS != -999) dispatchParam("FPS", info.camFPS);
+                        if (info.camOff != false) dispatchParam("CAMOFF", info.camOff);
+                        if (info.camOn != false) dispatchParam("CAMON", info.camOn);
+                        if (info.minArea != -999.0f) dispatchParam("AREA", info.minArea);
+                        if (info.minCircularity != -999.0f) dispatchParam("CIR", info.minCircularity);
 
                         break;
                     }
@@ -194,19 +243,19 @@ int main() {
                             
                             NetCmdReqImage req;
                             // Convert string ID from CLI to integer ID
-                            req.slave_id = (info.targetCamID != "") ? stoi(info.targetCamID) : 0; 
+                            req.slave_id = info.targetCamID; 
                             req.saveFolder = info.saveFolder;
                             
                             netIn.payload = req;
                             mainToNetQueue->push(netIn);
                             
-                            printf("[ROUTER] Dispatched Image Capture request to Slave %d.\n", req.slave_id);
+                            printf("\n[ROUTER] Dispatched Image Capture request to Slave %d.\n", req.slave_id);
                         }
                         break;
                     }
 
                     case CLI_EXIT: {
-                        printf("[ROUTER] Exit signal received. Commencing shutdown...\n");
+                        printf("\n[ROUTER] Exit signal received. Commencing shutdown...\n");
                         cliModule.setState(CLI_STOP);
                         calibModule.setState(CALIB_STOP);
                         netModule.setState(NETWORK_STOP);
@@ -243,6 +292,6 @@ int main() {
     if (triThread.joinable()) triThread.join();
     if (triggerThread.joinable()) triggerThread.join();
 
-    printf("[SYSTEM] All modules terminated!\n");
+    printf("\n[SYSTEM] All modules terminated!\n");
     return 0;
 }

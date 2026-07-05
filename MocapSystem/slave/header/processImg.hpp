@@ -22,6 +22,8 @@ class ProcessImgModule : public IModule<I, int> {
         int thresh_value = 245;
         int max_disappeared = 30;
         float tracking_dist_threshold = 50.0f;
+        double minArea = 50.0;
+        double minCircularity = 0.6;
         uint8_t next_id = 0;
         
         // Memory for tracking
@@ -51,6 +53,10 @@ void ProcessImgModule<I>::setConfig(string paramName, float value) {
         this->max_disappeared = (int)value;
     } else if (paramName == "TRACK_DIST") {
         this->tracking_dist_threshold = value;
+    } else if (paramName == "AREA") {
+        this->minArea = value;
+    } else if (paramName == "CIR") {
+        this->minCircularity = value;
     }
 }
 
@@ -90,21 +96,28 @@ vector<CenterPacket> ProcessImgModule<I>::extractAndTrack(const Mat& frame) {
     threshold(blurred, thresh, thresh_value, 255, THRESH_BINARY);
 
     // Contour Extraction
-    vector<vector<Point>> contours;
+    vector<vector<Point>> contours;    
     findContours(thresh, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    printf("\n[PROCESSOR] Number of contours found: %d\n", contours.size());
 
     vector<Point2f> current_centers;
     
     for (const auto& c : contours) {
         double area = contourArea(c);
-        if (area < 50.0) continue; // Filter small noise
+        if (area < this->minArea) {
+            printf("[PROCESSOR] Too small: %f < %f\n", area, this->minArea);
+            continue; // Filter small noise
+        }
 
         Point2f center;
         float radius;
         minEnclosingCircle(c, center, radius);
         
         double circularity = area / (M_PI * radius * radius);
-        if (circularity < 0.6) continue; // Filter non-circular blobs
+        if (circularity < this->minCircularity) {
+            printf("[PROCESSOR] Not round enough: %f < %f\n", circularity, this->minCircularity);
+            continue; // Filter non-circular blobs
+        }
 
         Moments m = moments(c);
         if (m.m00 == 0) continue;
@@ -113,6 +126,7 @@ vector<CenterPacket> ProcessImgModule<I>::extractAndTrack(const Mat& frame) {
         float cY = static_cast<float>(m.m01 / m.m00);
         current_centers.push_back(Point2f(cX, cY));
     }
+    printf("[PROCESSOR] Amount of centers found: %d\n", current_centers.size());
 
     // ID Tracking Logic
     vector<CenterPacket> output_markers;
@@ -177,6 +191,11 @@ vector<CenterPacket> ProcessImgModule<I>::extractAndTrack(const Mat& frame) {
             current_centers[i].x,
             current_centers[i].y
         });
+    }
+
+    // Debug, print out markers
+    for (auto it : output_markers) {
+        printf("Detected marker: %d (id) - (%f, %f)\n", it.object_id, it.x, it.y);
     }
 
     return output_markers;

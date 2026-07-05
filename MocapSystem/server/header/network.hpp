@@ -35,15 +35,17 @@ class NetworkModule : public IModule<I, NetworkOutputResult> {
     private:
         int tcp_server_fd = -1; // File descriptor for the TCP server listening socket
         int udp_broadcast_fd = -1; // File descriptor for the UDP broadcast socket
-        int udp_port = 0; // Port used for broadcasting UDP timing triggers
-        int tcp_port = 0; // Port used for listening to incoming TCP connections
+        int udp_port = 8081; // Port used for broadcasting UDP timing triggers
+        int tcp_port = 8080; // Port used for listening to incoming TCP connections
         int udp_recv_fd = -1;
-        int udp_recv_port = 0;
-        string bind_ip = ""; // IP address to bind the server to (empty means INADDR_ANY)
+        int udp_recv_port = 8082;
+        string bind_ip = "10.42.0.1"; // IP address to bind the server to (empty means INADDR_ANY)
         unordered_map<string, int> ip_to_fd;
         
         unordered_map<int, int> slave_sockets; // K: slave_id, V: socket_fd
         unordered_map<int, string> pending_img_paths; // K: slave_id, V: save folder
+
+        string udpTriggerIPBand = "255.255.255.255";
         
         atomic<bool> is_running{false};
         thread rx_thread;
@@ -56,6 +58,7 @@ class NetworkModule : public IModule<I, NetworkOutputResult> {
         void handleTCPClient(int client_fd);
         void sendUDPTrigger(const NetCmdTrigger& data);
         void sendTCPRequest(int slave_id, TCP_PACKET_TYPE type, const void* payload, size_t size);
+        
 
     public:
         NetworkModule();
@@ -64,7 +67,13 @@ class NetworkModule : public IModule<I, NetworkOutputResult> {
         void setState(int newState) override;
         void runModule() override;
         void processInput(const NetworkInput& input);
+        void setudpTriggerIPBand(string band);
 };
+
+template <typename I>
+void NetworkModule<I>::setudpTriggerIPBand(string band) {
+    this->udpTriggerIPBand = band;
+}
 
 template <typename I>
 NetworkModule<I>::NetworkModule() : IModule<I, NetworkOutputResult>(20) {
@@ -79,7 +88,7 @@ NetworkModule<I>::~NetworkModule() {
 template <typename I>
 void NetworkModule<I>::setState(int newState) {
     this->moduleState = newState;
-    if (newState == NETWORK_RUNNING && !is_running) {
+    if ((newState == NETWORK_RUNNING || newState == NETWORK_IDLE) && !is_running) {
         initNetwork();
     } else if (newState == NETWORK_STOP && is_running) {
         closeNetwork();
@@ -111,7 +120,7 @@ void NetworkModule<I>::initNetwork() {
     struct sockaddr_in recv_addr;
     recv_addr.sin_family = AF_INET;
     recv_addr.sin_addr.s_addr = bind_ip.empty() ? INADDR_ANY : inet_addr(bind_ip.c_str());
-    recv_addr.sin_port = htons(udp_recv_port);
+    recv_addr.sin_port = htons(udp_recv_port > 0 ? udp_recv_port : 8082);
 
     if (bind(udp_recv_fd, (struct sockaddr*)&recv_addr, sizeof(recv_addr)) < 0) {
         perror("[NETWORK] Failed to bind UDP Receive Port");
@@ -145,6 +154,7 @@ void NetworkModule<I>::closeNetwork() {
     
     if (tcp_server_fd >= 0) close(tcp_server_fd);
     if (udp_broadcast_fd >= 0) close(udp_broadcast_fd);
+    if (udp_recv_fd >= 0) { close(udp_recv_fd); udp_recv_fd = -1; }
     
     lock_guard<mutex> lock(sock_mtx);
     for (auto const& [id, fd] : slave_sockets) {
@@ -204,7 +214,7 @@ void NetworkModule<I>::rxLoop() {
             
             int bytes_read = recvfrom(udp_recv_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&slave_addr, &addr_len);
             
-            if (bytes_read >= sizeof(CameraPacketHeader)) {
+            if (bytes_read > 0 && bytes_read >= (int)sizeof(CameraPacketHeader)) {
                 CameraPacket pkt;
                 memcpy(&pkt.header, buffer, sizeof(CameraPacketHeader));
                 
@@ -293,7 +303,7 @@ void NetworkModule<I>::sendUDPTrigger(const NetCmdTrigger& data) {
     memset(&bcast_addr, 0, sizeof(bcast_addr));
     bcast_addr.sin_family = AF_INET;
     bcast_addr.sin_port = htons(udp_port > 0 ? udp_port : 9090);
-    bcast_addr.sin_addr.s_addr = inet_addr("255.255.255.255");
+    bcast_addr.sin_addr.s_addr = inet_addr(this->udpTriggerIPBand.c_str());
 
     sendto(udp_broadcast_fd, &pkt, sizeof(pkt), 0, (struct sockaddr*)&bcast_addr, sizeof(bcast_addr));
 }
@@ -324,6 +334,13 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
             this->udp_port = cfg.udp_port;
             this->udp_recv_port = cfg.udp_recv_port;
             this->bind_ip = cfg.bind_ip;
+            printf("\n[NETWORK] Set network to: %s - %d (tcp) - %d (udp trig) - %d (udp track)\n", cfg.bind_ip.c_str(), cfg.tcp_port, cfg.udp_port, cfg.udp_recv_port);
+
+            if (is_running) {
+                printf("[NETWORK] Restarting sockets to apply new configurations...\n");
+                closeNetwork();
+                initNetwork();
+            }
             break;
         }
         case NET_CMD_BROADCAST_TRIGGER: {
@@ -334,7 +351,7 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
             auto req = get<NetCmdReqImage>(input.payload);
             pending_img_paths[req.slave_id] = req.saveFolder;
             sendTCPRequest(req.slave_id, PKT_CMD_REQ_IMG, nullptr, 0);
-            printf("[NETWORK] Sent Capture Request to Slave %d\n", req.slave_id);
+            printf("\n[NETWORK] Sent Capture Request to Slave %d\n", req.slave_id);
             break;
         }
         case NET_CMD_SET_PARAM: {
@@ -357,9 +374,23 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
                 write(target_fd, &tcp_head, sizeof(TCPHeader));
                 write(target_fd, param_str.c_str(), total_payload_size);
                 
-                printf("[NETWORK] Sent Param Set (%s) to FD %d\n", param_str.c_str(), target_fd);
+                printf("\n[NETWORK] Sent Param Set (%s) to FD %d\n", param_str.c_str(), target_fd);
+
+                // Update new slave ID for slave_sockets
+                if (req.param_name == "ID") {
+                    int new_id = (int)req.value;
+                    for (auto it = slave_sockets.begin(); it != slave_sockets.end(); ) {
+                        if (it->second == target_fd) {
+                            it = slave_sockets.erase(it);
+                        } else {
+                            ++it;
+                        }
+                    }
+                    slave_sockets[new_id] = target_fd;
+                    printf("[NETWORK] Server 'slave_sockets' map updated! FD %d is now ID %d.\n", target_fd, new_id);
+                }
             } else {
-                printf("[NETWORK] Failed to find target Slave for param config (IP: %s, ID: %d).\n", 
+                printf("\n[NETWORK] Failed to find target Slave for param config (IP: %s, ID: %d).\n", 
                         req.target_ip.c_str(), req.slave_id);
             }
             break;
@@ -367,7 +398,7 @@ void NetworkModule<I>::processInput(const NetworkInput& input) {
         case NET_CMD_QUERY_INFO: {
             auto req = get<NetCmdQueryInfo>(input.payload);
             sendTCPRequest(req.slave_id, PKT_CMD_REQ_INFO, nullptr, 0);
-            printf("[NETWORK] Sent Info Query to Slave %d\n", req.slave_id);
+            printf("\n[NETWORK] Sent Info Query to Slave %d\n", req.slave_id);
             break;
         }
     }

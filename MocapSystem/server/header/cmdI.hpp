@@ -40,6 +40,11 @@ void CLIModule<I>::runModule() {
     sys_mode->add_option("--main", mainMode, "Choose system main mode");
     sys_mode->add_option("--sub", subMode, "Choose module mode");
 
+    // System set
+    int systemFPS = -999;
+    CLI::App* sys_cfg = app.add_subcommand("syscfg", "Config system parameters");
+    sys_cfg->add_option("--fps", systemFPS, "Choose system FPS (Control how quickly trigger messages are boardcasted and camera FPS)");
+
     // Commands for calib block
     CLI::App* calib = app.add_subcommand("calib");
     string imgSrcIn = "";
@@ -57,6 +62,11 @@ void CLIModule<I>::runModule() {
     calib->add_option("--col", col, "Amount of cols of the board, in checker square amount");
     float squareSize = 0;
     calib->add_option("--sqSize", squareSize, "Lenth of a side of a checker square, in mm");
+
+    double target_rms = -999.0f; 
+    size_t min_images = -999; 
+    calib->add_option("--rms", target_rms, "Final RMS for intrinsic calibration to optimize to");
+    calib->add_option("--minImg", min_images, "Min image amount to do for intrinsic calib");
 
     // Commands for the triangulation block
     CLI::App* triangulation = app.add_subcommand("triangulate");
@@ -86,13 +96,18 @@ void CLIModule<I>::runModule() {
     // Commands to manage slaves
     int target_id = -999;
     int newSlaveID_val = -999;
-    float thresh_value = -999.0f, max_dis = -999.0f, track_dist = -999.0f;
+    float thresh_value = -999.0f, max_dis = -999.0f, track_dist = -999.0f; double minArea = -999.0f; double minCircularity = -999.0f;
     float brightness = -999.0f, gain = -999.0f, exposure = -999.0f;
+    int resWidth = -999; int resHeight = -999; int camFPS = -999;
+    bool camOff = false; bool camOn = false;
     CLI::App* slave_cmd = app.add_subcommand("slave", "Slave utility commands");
     string slave_ip = "";
     slave_cmd->add_option("--slaveIP", slave_ip);
+
     bool getID = false;
     slave_cmd->add_flag("--getID", getID);
+    slave_cmd->add_flag("--camOff", camOff);
+    slave_cmd->add_flag("--camOn", camOn);
     
     slave_cmd->add_option("--targetID", target_id, "Target by ID");
     slave_cmd->add_option("--updateID", newSlaveID_val, "Set new ID");
@@ -105,6 +120,13 @@ void CLIModule<I>::runModule() {
     slave_cmd->add_option("--brightness", brightness, "Set camera brightness");
     slave_cmd->add_option("--gain", gain, "Set camera gain");
     slave_cmd->add_option("--exposure", exposure, "Set camera exposure time");
+    slave_cmd->add_option("--w", resWidth, "Set resolution width");
+    slave_cmd->add_option("--h", resHeight, "Set resolution height");
+    slave_cmd->add_option("--fps", camFPS, "Set cam FPS");
+    slave_cmd->add_option("--area", minArea, "Set min marker area");
+    slave_cmd->add_option("--cir", minCircularity, "Set min marker circularity");
+
+
     
     // Commands for other tasks
     CLI::App* controlled_capture_cmd = app.add_subcommand("ctlcap", "Command slaves to take picture in a controlled manner");
@@ -117,7 +139,7 @@ void CLIModule<I>::runModule() {
     int cameraID = 0;
     controlled_capture_cmd->add_option("--camID", cameraID, "Select camera to take picture");
     string saveFolder = ".";
-    controlled_capture_cmd->add_option("--saveFolder", "Folder to save the images");
+    controlled_capture_cmd->add_option("--saveFolder", saveFolder, "Folder to save the images");
     int startIdx = 0;
     controlled_capture_cmd->add_option("--startIdx", startIdx, "Idx of the first pic to take in manual mode");
 
@@ -133,22 +155,23 @@ void CLIModule<I>::runModule() {
         if (input_line.empty()) continue;
 
         mainMode = ""; subMode = "";
-        imgSrcIn = ""; imgSrcEx = ""; startCalibCalc = false; calibMode = ""; targetCameraID = 0; row = 0; col = 0; squareSize = 0;
+        systemFPS = -999;
+        imgSrcIn = ""; imgSrcEx = ""; startCalibCalc = false; calibMode = ""; targetCameraID = 0; row = 0; col = 0; squareSize = 0; target_rms = -999.0f; min_images = -999;
         triangulateMode = ""; resultFolder = "";
         confNetworkMaster = false; confNetworkSlave = false; 
         confTX = false; confRX = false; port = 0; ip = "";
-        slave_ip = ""; getID = false; newSlaveID = 0; toggle = "";
+        slave_ip = ""; getID = false; toggle = ""; camOff = false; camOn = false;
         takePicAmount = 0; autoShot = false; manualShot = false; cameraID = 0; saveFolder = "."; startIdx = 0;
         target_id = -999;
         newSlaveID_val = -999;
-        thresh_value = -999.0f; max_dis = -999.0f; track_dist = -999.0f;
-        brightness = -999.0f; gain = -999.0f; exposure = -999.0f;
+        thresh_value = -999.0f; max_dis = -999.0f; track_dist = -999.0f; minArea = -999.0f; minCircularity = -999.0f;
+        brightness = -999.0f; gain = -999.0f; exposure = -999.0f; resWidth = -999; resHeight = -999; camFPS = -999;
 
         bool dontSendMore = false; // Avoid sending another payload after this if-else block if a payload has been sent in this if-else block
 
         try {
             app.clear();
-            app.parse(input_line, true);
+            app.parse(input_line, false);
 
             CLINotiPayload payload;
 
@@ -161,42 +184,66 @@ void CLIModule<I>::runModule() {
                 payload.cmdOrigin = CLI_SYSTEM_MODE_SET;
                 payload.info = mode_info;
             }
-            // Calib
+            // System config
+            if (sys_cfg->parsed()) {
+                systemCfg_Info cfg;
+
+                cfg.sysFPS = (sys_cfg->count("--fps") > 0) ? systemFPS : -999;
+
+                payload.cmdOrigin = CLI_SYS_CFG;
+                payload.info = cfg;
+            }
             else if (calib->parsed()) {
                 calib_Info calib_info;
                 CLIOutputResult result;
                 result.cmdOrigin = CLI_CALIB_SET;
 
+                CalibSettings c_settings;
+                c_settings.calibState = CALIB_IDLE; 
+
                 if (calib->count("--imgSrcIn") > 0) {
                     calib_info.imgSrc = imgSrcIn;
-                    get<CalibSettings>(result.result).dataFolderIn = imgSrcIn;
+                    c_settings.dataFolderIn = imgSrcIn; 
                 }
                 if (calib->count("--imgSrcEx") > 0) {
                     calib_info.imgSrc = imgSrcEx;
-                    get<CalibSettings>(result.result).dataFolderEx = imgSrcEx;
+                    c_settings.dataFolderEx = imgSrcEx;
                 }
                 if (calib->count("--startCalib") > 0) {
                     calib_info.startCalibCalc = true;
-                    get<CalibSettings>(result.result).calibState = CALIB_START;
+                    c_settings.calibState = CALIB_START;
                 }
                 if (calib->count("--mode") > 0) {
                     calib_info.calibMode = calibMode;
-                    if (calibMode == "ex") get<CalibSettings>(result.result).calibMode = CALIB_MODE_EX;
-                    else if (calibMode == "in") get<CalibSettings>(result.result).calibMode = CALIB_MODE_IN;
+                    if (calibMode == "ex") c_settings.calibMode = CALIB_MODE_EX;
+                    else if (calibMode == "in") c_settings.calibMode = CALIB_MODE_IN;
                 }
                 if (calib->count("--id") > 0) {
                     calib_info.targetID = targetCameraID;
-                    get<CalibSettings>(result.result).targetID = targetCameraID;
+                    c_settings.targetID = targetCameraID;
                 }
                 if (calib->count("--row") > 0) {
-                    get<CalibSettings>(result.result).desc.row = row;
+                    c_settings.desc.row = row;
                 }
                 if (calib->count("--col") > 0) {
-                    get<CalibSettings>(result.result).desc.col = col;
+                    c_settings.desc.col = col;
                 }
                 if (calib->count("--sqSize") > 0) {
-                    get<CalibSettings>(result.result).desc.checkSize = squareSize;
+                    c_settings.desc.checkSize = squareSize;
                 }
+                if (calib->count("--rms") > 0) {
+                    if (calibMode == "in") {
+                        calib_info.target_rms = target_rms != -999.0f ? target_rms : -999.0f;
+                    }
+                }
+                if (calib->count("--minImg") > 0) {
+                    if (calibMode == "in") {
+                        calib_info.min_images = min_images != -999 ? min_images : -999;
+                    }
+                }
+                
+                result.result = c_settings;
+
                 // Send to result to output queue
                 this->outputData->push(result);
                 
@@ -231,13 +278,22 @@ void CLIModule<I>::runModule() {
                 manageSlave_Info slave_info;
                 slave_info.slave_ip = (slave_cmd->count("--slaveIP") > 0) ? slave_ip : "";
                 slave_info.target_id = (slave_cmd->count("--targetID") > 0) ? target_id : -999;
-                slave_info.newSlaveID = (slave_cmd->count("--updateID") > 0) ? newSlaveID : -999;
+                slave_info.newSlaveID = (slave_cmd->count("--updateID") > 0) ? newSlaveID_val : -999;
                 slave_info.thresh_value = (slave_cmd->count("--thresh") > 0) ? thresh_value : -999;
                 slave_info.max_disappeared = (slave_cmd->count("--maxDis") > 0) ? max_dis : -999;
                 slave_info.tracking_dist = (slave_cmd->count("--trackDist") > 0) ? track_dist : -999;
                 slave_info.brightness = (slave_cmd->count("--brightness") > 0) ? brightness : -999;
                 slave_info.gain = (slave_cmd->count("--gain") > 0) ? gain : -999;
                 slave_info.exposure = (slave_cmd->count("--exposure") > 0) ? exposure : -999;
+                slave_info.resWidth = (slave_cmd->count("--w") > 0) ? resWidth : -999;
+                slave_info.resHeight = (slave_cmd->count("--h") > 0) ? resHeight : -999;
+                slave_info.camFPS = (slave_cmd->count("--fps") > 0) ? camFPS : -999;
+                slave_info.minArea = (slave_cmd->count("--area") > 0) ? minArea : -999.0f;
+                slave_info.minCircularity = (slave_cmd->count("--cir") > 0) ? minCircularity : -999.0f;
+
+                slave_info.camOff = (slave_cmd->count("--camOff") > 0) ? camOff : false;
+                slave_info.camOn = (slave_cmd->count("--camOn") > 0) ? camOn : false;
+
 
                 payload.cmdOrigin = CLI_MANAGE_SLAVE_SET;
                 payload.info = slave_info;

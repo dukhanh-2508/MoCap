@@ -58,6 +58,7 @@ void NetworkModule<I>::setInitialConfig(string ip, int port, int id) {
     this->server_ip = ip;
     this->tcp_port = port;
     this->slave_id = id;
+    this->udp_port = port + 1;
 }
 
 template <typename I>
@@ -191,20 +192,28 @@ void NetworkModule<I>::tcpRxLoop() {
             this->outputData->push(trigger);
         }
         else if (header.type == PKT_CMD_SET_PARAM) {
-            string payload_str((char*)payload_buffer, header.payload_size);
-            size_t colon_pos = payload_str.find(':');
+            std::vector<char> buffer(header.payload_size);
+            int bytes_read = read(tcp_client_fd, buffer.data(), header.payload_size);
             
-            if (colon_pos != string::npos) {
-                SystemNotification noti;
-                noti.origin = NETWORK;
+            if (bytes_read == header.payload_size) {
+                string payload_str(buffer.data(), header.payload_size);
+                size_t colon_pos = payload_str.find(':');
                 
-                NetworkNotiPayloadSlave p;
-                p.cmdOrigin = NET_SERVER_CMD_CONFIG;
-                p.paramName = payload_str.substr(0, colon_pos);
-                p.paramValue = stof(payload_str.substr(colon_pos + 1));
-                
-                noti.payload = p;
-                this->outNoti->push(noti);
+                if (colon_pos != string::npos) {
+                    SystemNotification noti;
+                    noti.origin = NETWORK;
+                    
+                    NetworkNotiPayloadSlave p;
+                    p.cmdOrigin = NET_SERVER_CMD_CONFIG;
+                    p.paramName = payload_str.substr(0, colon_pos);
+                    
+                    p.paramValue = stof(payload_str.substr(colon_pos + 1));
+                    
+                    noti.payload = p;
+                    this->outNoti->push(noti);
+                }
+            } else {
+                printf("[NETWORK] Error: Incomplete param payload received.\n");
             }
         }
         else if (header.type == PKT_CMD_REQ_INFO) {
@@ -259,6 +268,8 @@ void NetworkModule<I>::sendFileTCP(const string& filepath) {
     }
     fclose(img_file);
     printf("[SLAVE NETWORK] Image file sent to server: %s\n", filepath.c_str());
+
+    remove(filepath.c_str()); // Delete file from RAM
 }
 
 template <typename I>

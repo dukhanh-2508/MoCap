@@ -57,7 +57,8 @@ enum CMD_SET {
     CLI_NETWORK_SET = 3,
     CLI_MANAGE_SLAVE_SET = 4,
     CLI_OTHER_SET = 5,
-    CLI_EXIT = 6
+    CLI_EXIT = 6,
+    CLI_SYS_CFG = 7,
 };
 
 // Structs for notification msgs
@@ -67,10 +68,16 @@ typedef struct {
 } systemMode_Info;
 
 typedef struct {
+    int sysFPS;
+} systemCfg_Info;
+
+typedef struct {
     string imgSrc = "";
     bool startCalibCalc = false;
     string calibMode = "";
     int targetID;
+    double target_rms;
+    int min_images;
 } calib_Info;
 
 typedef struct {
@@ -94,6 +101,9 @@ typedef struct {
     bool getID;
     string toggle;
 
+    // false means unchanged
+    bool camOff;
+    bool camOn;
     // For the following parameters, -999 means unchanged
     int newSlaveID;
     float thresh_value;
@@ -103,13 +113,18 @@ typedef struct {
     float brightness;
     float gain;
     float exposure;
+    int resWidth;
+    int resHeight;
+    int camFPS;
+    double minArea;
+    double minCircularity;
 } manageSlave_Info;
 
 typedef struct {
     int takePicAmount = 0;
     int imgIdx = 0; // Onlu used when in manual mode, otherwise it should remain at 0
     bool isManualMode = true;
-    string targetCamID = 0;
+    int targetCamID = 0;
     string saveFolder = ".";
 } other_Info;
 
@@ -118,7 +133,7 @@ typedef struct {
 
 typedef struct {
     CMD_SET cmdOrigin;
-    variant<systemMode_Info, calib_Info, triangulate_Info, network_Info, manageSlave_Info, other_Info, exit_Info> info;
+    variant<systemMode_Info, calib_Info, triangulate_Info, network_Info, manageSlave_Info, other_Info, exit_Info, systemCfg_Info> info;
 } CLINotiPayload;
 
 typedef struct {

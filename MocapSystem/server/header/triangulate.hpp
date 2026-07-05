@@ -89,7 +89,7 @@ void TriangulateModule<I>::loadCalibrationData(const string& calibFolder) {
     printf("[TRIANGULATE] Loading calibration data from: %s\n", calibFolder.c_str());
     
     for (auto item : this->availableCamID) {
-        int cam_id = item.first();
+        int cam_id = item.first;
         Mat K, dist, R, T;
         bool intrinsicLoaded = false;
         bool extrinsicLoaded = false;
@@ -269,6 +269,7 @@ void TriangulateModule<I>::process_aligned_frame(const AlignedFrame& frame) {
         }
 
         if (!raw_pts.empty() && camera_K_matrices.count(cam_id) && camera_D_coeffs.count(cam_id)) {
+            // Deal with distortion
             undistortPoints(raw_pts, ideal_pts, 
                                 camera_K_matrices[cam_id], 
                                 camera_D_coeffs[cam_id], 
@@ -276,16 +277,19 @@ void TriangulateModule<I>::process_aligned_frame(const AlignedFrame& frame) {
                                 camera_K_matrices[cam_id]);
                                 
             for (size_t i = 0; i < ideal_pts.size(); ++i) {
-                frame_data_3d[obj_ids[i]].push_back(
+                int forced_id = 0;
+                frame_data_3d[forced_id].push_back( // Replace obj_ids[i] by forced_id
                     CameraObservation{cam_id, ideal_pts[i]}
                 );
             }
-        }
-        
-        for (const auto& center : pkt.centers) {
-            frame_data_3d[center.object_id].push_back(
-                CameraObservation{cam_id, Point2f(center.x, center.y)}
-            );
+        } else {
+            for (const auto& center : pkt.centers) {
+                int forced_id = 0;
+                frame_data_3d[forced_id].push_back( // Replace center.object_id by forced_id
+                    CameraObservation{cam_id, Point2f(center.x, center.y)}
+                );
+                printf("[TRIANGULATION] Observation added: %d (obj id) - %d (cam id) - (%f, %f)\n", center.object_id, cam_id, center.x, center.y);
+            }
         }
     }
 
@@ -293,14 +297,14 @@ void TriangulateModule<I>::process_aligned_frame(const AlignedFrame& frame) {
     for (const auto& item : frame_data_3d) {
         int marker_id = item.first;
         const vector<CameraObservation>& obs = item.second;
-        
+        printf("[TRIANGULATION] Processing observation...\n");
         if (obs.size() >= 2) {
             Point3d pt3d = triangulate_multi_view(obs);
             
             out_log << "[ID: " << marker_id << "] -> " 
                     << "X: " << pt3d.x << " | "
                     << "Y: " << pt3d.y << " | "
-                    << "Z: " << pt3d.z << " (mm)" << endl;
+                    << "Z: " << pt3d.z << " (cm)" << endl;
         }
     }
     out_log << flush;

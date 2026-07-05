@@ -68,10 +68,14 @@ int main(int argc, char** argv) {
     // Assign the custom queue to Network so FSM can route multiple data types to it
     netModule.assignInputQueue(netInputQueue);
 
+    netModule.setInitialConfig(srv_ip, srv_port, initial_id);
+    captureModule.setConfig("ID", (float)initial_id);
+    processModule.setConfig("ID", (float)initial_id);
+
     // Start Modules Threads
-    netModule.setState(NETWORK_IDLE);
-    captureModule.setState(CAPTURE_IDLE);
-    processModule.setState(PROCESS_IDLE);
+    netModule.setState(NETWORK_RUNNING);
+    captureModule.setState(CAPTURE_RUNNING);
+    processModule.setState(PROCESS_RUNNING);
 
     thread netThread(&NetworkModule<SlaveNetworkInput>::runModule, &netModule);
     thread captureThread(&CaptureImgModule<CaptureTrigger>::runModule, &captureModule);
@@ -118,13 +122,19 @@ int main(int argc, char** argv) {
                             processModule.setConfig("ID", pVal);
                             printf("[SLAVE FSM] System ID permanently updated to: %d\n", new_id);
                         } 
-                        else if (pName == "THRESH" || pName == "MAX_DIS" || pName == "TRACK_DIST") {
+                        else if (pName == "THRESH" || pName == "MAX_DIS" || pName == "TRACK_DIST" || pName == "AREA" || pName == "CIR") {
                             processModule.setConfig(pName, pVal);
                             printf("[SLAVE FSM] CV processing param %s updated to: %.2f\n", pName.c_str(), pVal);
                         } 
-                        else if (pName == "BRIGHTNESS" || pName == "GAIN" || pName == "EXPOSURE") {
+                        else if (pName == "BRIGHTNESS" || pName == "GAIN" || pName == "EXPOSURE" || pName == "RESW" || pName == "RESH" || pName == "FPS") {
                             captureModule.setConfig(pName, pVal);
                             printf("[SLAVE FSM] Camera hardware param %s updated to: %.2f\n", pName.c_str(), pVal);
+                        } else if (pName == "CAMOFF" || pName == "CAMON") {
+                            if (pName == "CAMOFF") {
+                                captureModule.closeCamera();
+                            } else if (pName == "CAMON") {
+                                captureModule.openCamera();
+                            }
                         }
                         break;
                     }
